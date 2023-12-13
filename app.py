@@ -1,0 +1,57 @@
+from flask import Flask
+import requests
+import cachetools.func
+
+import json
+
+with open('configs.json') as file:
+    configs = json.load(file)
+
+ttl = configs['ttl'] if 'ttl' in configs.keys() else 0
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return 'test'
+
+
+@app.route('/api/current_readings')
+@cachetools.func.ttl_cache(maxsize=128, ttl=ttl)
+def current_readings():
+    r = requests.get(f'{configs["remote_url"]}/api/current_reading')
+    if r.status_code == 200:
+        rj = r.json()
+    else:
+        return {
+            'status': 'error',
+            'error': 'remote_host_error'
+        }
+
+    if rj['status'] == 'error' and rj['error'] == 'sensor_error':
+        return {
+            'status': 'error',
+            'error': 'sensor_error'
+        }
+    elif rj['status'] == 'error':
+        return {
+            'status': 'error',
+            'error': 'other_error'
+        }
+
+    return {
+        'status': 'ok',
+        'temperature': round(rj['ds18b20']['temperature'], 2),
+        'humidity': round(rj['bme280']['humidity'], 2),
+        'pressure': round(rj['bme280']['pressure'], 2),
+        'dewpoint': round(((rj['bme280']['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * rj['ds18b20']['temperature'])) + (0.1 * rj['ds18b20']['temperature']) - 112, 2)
+    }
+
+
+if __name__ == '__main__':
+    host = configs['host'] if 'host' in configs.keys() else None
+    port = configs['port'] if 'port' in configs.keys() else None
+    debug = configs['debug'] if 'debug' in configs.keys() else None
+
+    app.run(host=host, port=port, debug=debug)
