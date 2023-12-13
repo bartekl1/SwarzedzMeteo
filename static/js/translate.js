@@ -1,4 +1,7 @@
-const textTranslations = ["Website uses cookies for statistical purposes."];
+const textTranslations = [
+    "Website uses cookies for statistical purposes.",
+    "You are offline",
+];
 
 const titleTranslations = {};
 
@@ -16,8 +19,7 @@ const dataBSTranslations = {
 if (window.navigator.language.split("-")[0] !== "pl") {
     document.querySelector("html").lang = "en";
 
-    document.querySelector("link[rel=manifest]").href =
-        "/manifest_en.json";
+    document.querySelector("link[rel=manifest]").href = "/manifest_en.json";
 
     // document.querySelector("title").innerHTML =
     //     titleTranslations[document.querySelector("title").innerHTML];
