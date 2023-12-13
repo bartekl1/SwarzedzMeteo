@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    {% if 'google_analytics' in configs.keys() %}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ configs['google_analytics'] }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '{{ configs["google_analytics"] }}');
+    </script>
+    {% endif %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Swarzędz Meteo</title>
+
+    <meta name="description" content="Amatorska stacja meteo w Swarzędzu">
+    <meta name="keywords" content="Swarzędz Meteo, Swarzędz pogoda, Pogoda w Swarzędzu">
+    <meta name="author" content="Bartek L">
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1/font/bootstrap-icons.min.css" integrity="sha384-c9MVH4yRDZMY+bSlECVISp9U4xBl1dKb5z4x8IgF6lBKTHsh1AtxHBfHiiA+S/Nr" crossorigin="anonymous">
+
+    <script src="/static/js/theme.js"></script>
+
+    <link rel="manifest" href="/manifest.json">
+
+    <link rel="shortcut icon" href="/static/img/icon.ico">
+    <link rel="apple-touch-icon" href="/static/img/icons/icon_x192.png">
+
+    <!-- Standard browsers -->
+    <meta name="theme-color" content="#0d6efd"/>
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#0d6efd">
+
+    {% if 'google_site_verification' in configs.keys() %}
+    <meta name="google-site-verification" content="{{ configs['google_site_verification'] }}">
+    {% endif %}
+</head>
+<body class="pt-2 px-3">
+    <h1 class="h2 text-center">
+        <span>Swarzędz Meteo</span>
+        <img src="/static/img/icon_animated.svg" width="55px" height="55px">
+    </h1>
+
+    <div class="d-flex justify-content-center" id="loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div class="container d-none" id="offline">
+        <div class="alert alert-danger d-flex">
+            <div class="fs-1">
+                <i class="bi bi-wifi-off"></i>
+            </div>
+            <div class="fs-3 ms-3 mt-2">
+                <span text-id="1">Jesteś offline</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-none" id="main">
+        
+    </div>
+
+    {% if 'google_analytics' in configs.keys() %}
+    <div id="cookies-info" class="d-flex d-none position-fixed bottom-0 start-0 w-100 bg-body-secondary px-3 py-1">
+        <div class="cookie-icon">
+            <i class="bi bi-cookie"></i>
+        </div>
+        <div class="fs-5 ms-3 my-3">
+            <div text-id="0">Strona wykorzystuje pliki cookies do celów statystycznych.</div>
+        </div>
+        <button type="button" class="btn-close my-3 me-1 m-auto" id="accept-cookies"></button>
+    </div>
+
+    <script>
+        if (localStorage.getItem('cookies-accepted') !== 'true') {
+            document.querySelector('#cookies-info').classList.remove('d-none');
+        }
+
+        document.querySelector('#accept-cookies').addEventListener('click', () => {
+            document.querySelector('#cookies-info').classList.add('d-none');
+            localStorage.setItem('cookies-accepted', 'true');
+        })
+    </script>
+    {% endif %}
+    
+    <script src="/static/js/translate.js"></script>
+    <script src="/static/js/error.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <script src="/static/js/index.js"></script>
+
+    <script>
+        var reg;
+        // Register the service worker
+        if ('serviceWorker' in navigator) {
+            // Wait for the 'load' event to not block other work
+            window.addEventListener('load', async () => {
+                // Try to register the service worker.
+                try {
+                    reg = await navigator.serviceWorker.register('/sw.js');
+                    console.log('Service worker registered! 😎', reg);
+                } catch (err) {
+                    console.log('😥 Service worker registration failed: ', err);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

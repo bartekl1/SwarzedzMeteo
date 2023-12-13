@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, send_file
 import requests
 import cachetools.func
 
@@ -14,7 +14,27 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'test'
+    return render_template('index.html', configs=configs)
+
+
+@app.route('/manifest.json')
+def manifest():
+    return send_file('static/manifest.json')
+
+
+@app.route('/manifest_en.json')
+def manifest_en():
+    return send_file('static/manifest_en.json')
+
+
+@app.route('/sw.js')
+def sw():
+    return send_file('static/js/sw.js')
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_file('static/img/icon.ico')
 
 
 @app.route('/api/current_readings')
