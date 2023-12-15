@@ -5,7 +5,7 @@ function getRandomVideo() {
     const user = "bartekl1";
     const repo = "SwarzedzMeteoBackgrounds";
     const resolution = 720;
-    
+
     rand = Math.floor(Math.random() * (max - min + 1)) + min;
 
     if (!ignore.includes(rand)) {
@@ -21,9 +21,11 @@ function tryToLoad() {
         document.querySelector("#offline").classList.add("d-none");
         document.querySelector("#main").classList.remove("d-none");
 
-        var videoDiv = document.createElement("div");
-        videoDiv.innerHTML = `<video id="background-video" autoplay loop muted src="${getRandomVideo()}"></video>`;
-        document.querySelector("body").appendChild(videoDiv);
+        setTimeout(() => {
+            var videoDiv = document.createElement("div");
+            videoDiv.innerHTML = `<video id="background-video" autoplay loop muted src="${getRandomVideo()}"></video>`;
+            document.querySelector("body").appendChild(videoDiv);
+        }, 100);
     } else {
         document.querySelector("#loading").classList.add("d-none");
         document.querySelector("#offline").classList.remove("d-none");
