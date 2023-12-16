@@ -17,6 +17,9 @@ const textTranslations = [
     "Request new feature",
     "Before you report a bug or suggest new feature, please read",
     "this information",
+    "This is an amateur weather station mounted on a balcony.",
+    "The weather station runs on a Raspberry Pi Zero W microcomputer.",
+    "A DS18B20 sensor was used to measure temperature, and a BME280 sensor was used to measure humidity and pressure.",
 ];
 
 const titleTranslations = {};
