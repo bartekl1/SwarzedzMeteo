@@ -40,7 +40,14 @@ def favicon():
 @app.route('/api/current_readings')
 @cachetools.func.ttl_cache(maxsize=128, ttl=ttl)
 def current_readings():
-    r = requests.get(f'{configs["remote_url"]}/api/current_reading')
+    try:
+        r = requests.get(f'{configs["remote_url"]}/api/current_reading')
+    except Exception:
+        return {
+            'status': 'error',
+            'error': 'remote_host_error'
+        }
+
     if r.status_code == 200:
         rj = r.json()
     else:
@@ -62,10 +69,10 @@ def current_readings():
 
     return {
         'status': 'ok',
-        'temperature': round(rj['ds18b20']['temperature'], 2),
-        'humidity': round(rj['bme280']['humidity'], 2),
-        'pressure': round(rj['bme280']['pressure'], 2),
-        'dewpoint': round(((rj['bme280']['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * rj['ds18b20']['temperature'])) + (0.1 * rj['ds18b20']['temperature']) - 112, 2)
+        'temperature': round(rj['ds18b20']['temperature'], 1),
+        'humidity': round(rj['bme280']['humidity']),
+        'pressure': round(rj['bme280']['pressure']),
+        'dewpoint': round(((rj['bme280']['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * rj['ds18b20']['temperature'])) + (0.1 * rj['ds18b20']['temperature']) - 112, 1)
     }
 
 

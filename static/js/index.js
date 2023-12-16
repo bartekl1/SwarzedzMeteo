@@ -15,11 +15,45 @@ function getRandomVideo() {
     }
 }
 
-function tryToLoad() {
-    if (navigator.onLine) {
+function loadCurrentReadings() {
+    fetch("/api/current_readings").then((res) => { return res.json() }).then((json) => {
+        if (json.status === "ok") {
+            document.querySelector("#temperature").innerHTML = `${json.temperature}${
+                (json.temperature % 1 === 0) ? ".0" : ""
+            }℃`;
+            document.querySelector("#humidity").innerHTML = `${json.humidity}%`;
+            document.querySelector("#pressure").innerHTML = `${json.pressure} hPa`;
+            document.querySelector("#dewpoint").innerHTML = `${json.dewpoint}${
+                (json.dewpoint % 1 === 0) ? ".0" : ""
+            }℃`;
+
+            document.querySelector("#loading").classList.add("d-none");
+            document.querySelector("#offline").classList.add("d-none");
+            document.querySelector("#current-readings-error").classList.add("d-none");
+            document.querySelector("#current-readings-container").classList.remove("d-none");
+            document.querySelector("#main").classList.remove("d-none");
+        } else if (json.status === "error") {
+            document.querySelector("#loading").classList.add("d-none");
+            document.querySelector("#offline").classList.add("d-none");
+            document.querySelector("#current-readings-error").classList.remove("d-none");
+            document.querySelector("#current-readings-container").classList.add("d-none");
+            document.querySelector("#main").classList.remove("d-none");
+        }
+        setTimeout(loadCurrentReadings, 30000);
+    }).catch((err) => {
         document.querySelector("#loading").classList.add("d-none");
         document.querySelector("#offline").classList.add("d-none");
+        document.querySelector("#current-readings-error").classList.remove("d-none");
+        document.querySelector("#current-readings-container").classList.add("d-none");
         document.querySelector("#main").classList.remove("d-none");
+        
+        setTimeout(loadCurrentReadings, 30000);
+    });
+}
+
+function tryToLoad() {
+    if (navigator.onLine) {
+        loadCurrentReadings();
 
         setTimeout(() => {
             var videoDiv = document.createElement("div");

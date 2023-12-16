@@ -22,11 +22,16 @@
 .frame {
     border-style: solid;
     border-width: 1px;
-    border-color: gray;
+    border-color: #b5b5b5bf;
 
     border-radius: 10px;
 
     padding: 10px;
+
+    -webkit-backdrop-filter: blur(50px);
+    backdrop-filter: blur(50px);
+
+    background-color: #5f5d5d17;
 }
 
 #background-video {

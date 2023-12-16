@@ -1,6 +1,11 @@
 const textTranslations = [
     "Website uses cookies for statistical purposes.",
     "You are offline",
+    "Temperature",
+    "Humidity",
+    "Pressure",
+    "Dew point",
+    "An error occurred"
 ];
 
 const titleTranslations = {};
