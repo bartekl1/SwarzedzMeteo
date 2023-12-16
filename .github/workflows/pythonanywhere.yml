@@ -1,0 +1,26 @@
+name: PythonAnywhere-Deployment
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+    release:
+        types: [published]
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            # - name: Start console
+            #   run: |
+            #         CONSOLEID=`curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}" -d '{"executable": "bash", "working_directory": "${{ secrets.PYTHONANYWHERE_DIRECTORY }}"}' -H "Content-Type: application/json" "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/" | jq .id`
+
+            - name: Pull repo
+              run: |
+                    curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}" -d '{"input": "git pull\n"}' -H "Content-Type: application/json" "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/${{ secrets.PYTHONANYWHERE_CONSOLE }}/send_input/"
+
+            - name: Reaload webapp
+              run: |
+                    curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}"  "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/webapps/${{ secrets.PYTHONANYWHERE_DOMAIN }}/reload/"
