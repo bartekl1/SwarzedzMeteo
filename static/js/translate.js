@@ -8,6 +8,15 @@ const textTranslations = [
     "An error occurred",
     "Current readings",
     "Information",
+    "General",
+    "Changelog",
+    "Acknowledgements",
+    "Version",
+    "GitHub repository",
+    "Report bug",
+    "Request new feature",
+    "Before you report a bug or suggest new feature, please read",
+    "this information",
 ];
 
 const titleTranslations = {};
@@ -22,7 +31,7 @@ const dataBSTranslations = {
     "Strona internetowa": "Website",
     "Profil GitHub": "GitHub profile",
     "Bieżące odczyty": "Current readings",
-    "Informacje": "Information"
+    Informacje: "Information",
 };
 
 if (window.navigator.language.split("-")[0] !== "pl") {

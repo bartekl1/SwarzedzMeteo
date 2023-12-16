@@ -111,3 +111,40 @@ const tooltipTriggerList = Array.from(
 tooltipTriggerList.forEach((tooltipTriggerEl) => {
     new bootstrap.Tooltip(tooltipTriggerEl);
 });
+
+fetch(
+    window.navigator.language.split("-")[0] == "pl"
+        ? "https://raw.githubusercontent.com/bartekl1/SwarzedzMeteo/main/CHANGELOG_PL.md"
+        : "https://raw.githubusercontent.com/bartekl1/SwarzedzMeteo/main/CHANGELOG.md"
+)
+    .then((response) => {
+        return response.text();
+    })
+    .then((md) => {
+        md = md.split("\n").slice(1).join("\n");
+        var converter = new showdown.Converter();
+        var html = converter.makeHtml(md);
+        document.querySelector("#info-changelog").innerHTML = html;
+    });
+
+fetch(
+    window.navigator.language.split("-")[0] == "pl"
+        ? "https://raw.githubusercontent.com/bartekl1/SwarzedzMeteo/main/ACKNOWLEDGEMENTS_PL.md"
+        : "https://raw.githubusercontent.com/bartekl1/SwarzedzMeteo/main/ACKNOWLEDGEMENTS.md"
+)
+    .then((response) => {
+        return response.text();
+    })
+    .then((md) => {
+        md = md.split("\n").slice(1).join("\n");
+        var converter = new showdown.Converter();
+        var html = converter.makeHtml(md);
+        document.querySelector("#info-acknowledgements").innerHTML = html;
+        document
+            .querySelector("#info-acknowledgements")
+            .querySelectorAll("a")
+            .forEach((e) => {
+                e.rel = "noopener";
+                e.target = "_blank";
+            });
+    });
