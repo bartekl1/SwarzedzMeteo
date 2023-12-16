@@ -32,6 +32,8 @@ const dataBSTranslations = {
     "Profil GitHub": "GitHub profile",
     "Bieżące odczyty": "Current readings",
     Informacje: "Information",
+    Udostępnij: "Share",
+    Zainstaluj: "Install",
 };
 
 if (window.navigator.language.split("-")[0] !== "pl") {

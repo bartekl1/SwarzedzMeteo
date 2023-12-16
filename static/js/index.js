@@ -15,6 +15,16 @@ function getRandomVideo() {
     }
 }
 
+function getPWADisplayMode() {
+    const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.matchMedia("(display-mode: window-controls-overlay)").matches;
+    if (navigator.standalone || isStandalone) {
+        return "standalone";
+    }
+    return "browser";
+}
+
 function loadCurrentReadings() {
     fetch("/api/current_readings").then((res) => { return res.json() }).then((json) => {
         if (json.status === "ok") {
@@ -148,3 +158,43 @@ fetch(
                 e.target = "_blank";
             });
     });
+
+if (navigator.canShare) {
+    document.querySelector("#share").addEventListener("click", () => {
+        navigator.share({
+            title: "Swarzędz Meteo",
+            text:
+                window.navigator.language.split("-")[0] === "pl"
+                    ? "Amatorska stacja meteo w Swarzędzu"
+                    : "Amateur meteorological station in Swarzedz",
+            url: window.location.href,
+        });
+    });
+
+    document.querySelector("#share").classList.remove("d-none");
+}
+
+var deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+    deferredPrompt = e;
+
+    if (getPWADisplayMode() == "browser") {
+        document.querySelector("#install").classList.remove("d-none");
+    }
+});
+
+document.querySelector("#install").addEventListener("click", async () => {
+    if (deferredPrompt !== null) {
+        deferredPrompt.prompt();
+        // const { outcome } = await deferredPrompt.userChoice;
+        // if (outcome === "accepted") {
+        //     deferredPrompt = null;
+        // }
+    }
+});
+
+window.addEventListener("appinstalled", () => {
+    console.log("PWA was installed");
+
+    document.querySelector("#install").classList.add("d-none");
+});

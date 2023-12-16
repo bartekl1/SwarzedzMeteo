@@ -70,16 +70,27 @@
     </div>
 
     <div class="container d-none" id="main">
-        <div class="btn-group mb-2">
-            <input type="radio" class="btn-check" name="tab" id="current-readings-tab-button" target="#current-readings" checked>
-            <label class="btn btn-primary tab-label" for="current-readings-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Bieżące odczyty">
-                <i class="bi bi-circle-fill"></i>
-            </label>
-          
-            <input type="radio" class="btn-check" name="tab" id="info-tab-button" target="#info">
-            <label class="btn btn-secondary tab-label" for="info-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Informacje">
-                <i class="bi bi-info-circle"></i>
-            </label>
+        <div>
+            <div class="btn-group mb-2 float-start">
+                <input type="radio" class="btn-check" name="tab" id="current-readings-tab-button" target="#current-readings" checked>
+                <label class="btn btn-primary tab-label" for="current-readings-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Bieżące odczyty">
+                    <i class="bi bi-circle-fill"></i>
+                </label>
+            
+                <input type="radio" class="btn-check" name="tab" id="info-tab-button" target="#info">
+                <label class="btn btn-secondary tab-label" for="info-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Informacje">
+                    <i class="bi bi-info-circle"></i>
+                </label>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-primary d-none" id="share" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Udostępnij">
+                    <i class="bi bi-share-fill"></i>
+                </button>
+                <button class="btn btn-primary d-none" id="install" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Zainstaluj">
+                    <i class="bi bi-download"></i>
+                </button>
+            </div>
+            <div class="clearfix"></div>
         </div>
 
         <div class="frame" id="current-readings">
