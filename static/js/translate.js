@@ -5,7 +5,9 @@ const textTranslations = [
     "Humidity",
     "Pressure",
     "Dew point",
-    "An error occurred"
+    "An error occurred",
+    "Current readings",
+    "Information",
 ];
 
 const titleTranslations = {};
@@ -17,8 +19,10 @@ const alternativeTextTranslations = {};
 const elementsTitlesTranslations = {};
 
 const dataBSTranslations = {
-    Website: "Strona internetowa",
-    "GitHub profile": "Profil GitHub",
+    "Strona internetowa": "Website",
+    "Profil GitHub": "GitHub profile",
+    "Bieżące odczyty": "Current readings",
+    "Informacje": "Information"
 };
 
 if (window.navigator.language.split("-")[0] !== "pl") {

@@ -68,3 +68,46 @@ function tryToLoad() {
 }
 
 tryToLoad();
+
+document.querySelectorAll("input[name=tab]").forEach((e) => {
+    e.addEventListener("click", () => {
+        document.querySelectorAll(".tab-label").forEach((e2) => {
+            e2.classList.remove("btn-primary", "btn-secondary");
+        });
+
+        document
+            .querySelectorAll(
+                `.tab-label:not([for=${
+                    document.querySelector(
+                        "input[name=tab]:checked"
+                    ).id
+                }])`
+            )
+            .forEach((e2) => {
+                e2.classList.add("btn-secondary");
+            });
+
+        document
+            .querySelector(
+                `.tab-label[for=${
+                    document.querySelector(
+                        "input[name=tab]:checked"
+                    ).id
+                }]`
+            )
+            .classList.add("btn-primary");
+
+        document.querySelector(document.querySelector("input[name=tab]:checked").getAttribute("target")).classList.remove("d-none");
+
+        document.querySelectorAll("input[name=tab]:not(:checked)").forEach((e2) => {
+            document.querySelector(e2.getAttribute("target")).classList.add("d-none");
+        })
+    });
+});
+
+const tooltipTriggerList = Array.from(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+);
+tooltipTriggerList.forEach((tooltipTriggerEl) => {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+});
