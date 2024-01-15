@@ -28,14 +28,25 @@ function getPWADisplayMode() {
 function loadCurrentReadings() {
     fetch("/api/current_readings").then((res) => { return res.json() }).then((json) => {
         if (json.status === "ok") {
-            document.querySelector("#temperature").innerHTML = `${json.temperature}${
+            document.querySelector("#temperature").innerHTML = json.temperature !== null ? `${json.temperature}${
                 (json.temperature % 1 === 0) ? ".0" : ""
-            }℃`;
-            document.querySelector("#humidity").innerHTML = `${json.humidity}%`;
-            document.querySelector("#pressure").innerHTML = `${json.pressure} hPa`;
-            document.querySelector("#dewpoint").innerHTML = `${json.dewpoint}${
+            }℃` : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#humidity").innerHTML = json.humidity !== null ? `${json.humidity}%`
+                : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#pressure").innerHTML = json.pressure !== null ? `${json.pressure} hPa`
+                : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#dewpoint").innerHTML = json.dewpoint !== null ? `${json.dewpoint}${
                 (json.dewpoint % 1 === 0) ? ".0" : ""
-            }℃`;
+            }℃` : '<i class="bi bi-x-circle text-danger"></i>';
+
+            document.querySelector("#pm1-0").innerHTML = json["pm1.0"] !== null ? `${json["pm1.0"]} μg/m³`
+                : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#pm2-5").innerHTML = json["pm2.5"] !== null ? `${json["pm2.5"]} μg/m³`
+                : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#pm10").innerHTML = json["pm10"] !== null ? `${json["pm10"]} μg/m³`
+                : '<i class="bi bi-x-circle text-danger"></i>';
+            document.querySelector("#aqi").innerHTML = json["aqi"] !== null ? `${json["aqi"]}`
+                : '<i class="bi bi-x-circle text-danger"></i>';
 
             document.querySelector("#loading").classList.add("d-none");
             document.querySelector("#offline").classList.add("d-none");

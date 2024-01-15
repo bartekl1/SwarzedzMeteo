@@ -1,4 +1,4 @@
-const version = "1.0";
+const version = "1.1";
 // Choose a cache name
 const cacheNamePrefix = "cache-swarzedz-meteo";
 const cacheName = `${cacheNamePrefix}-v${version}`;
