@@ -1,7 +1,8 @@
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, Response
 import requests
 import cachetools.func
 
+import datetime
 import json
 
 with open('configs.json') as file:
@@ -40,40 +41,118 @@ def favicon():
 @app.route('/api/current_readings')
 @cachetools.func.ttl_cache(maxsize=128, ttl=ttl)
 def current_readings():
+    status = 200
+
     try:
         r = requests.get(f'{configs["remote_url"]}/api/current_reading')
     except Exception:
-        return {
-            'status': 'error',
-            'error': 'remote_host_error'
+        rd = {
+            'status': 'error'
+        }
+        status = 500
+
+    if status == 200:
+        if r.status_code == 200:
+            rj = r.json()
+        else:
+            rd = {
+                'status': 'error'
+            }
+            status = 500
+
+    if status == 200:
+        if rj['status'] == 'error':
+            rd = {
+                'status': 'error'
+            }
+            status = 500
+        elif rj['status'] == 'error':
+            rd = {
+                'status': 'error'
+            }
+            status = 500
+
+    if status == 200:
+        rd = {
+            'status': 'ok'
         }
 
-    if r.status_code == 200:
-        rj = r.json()
-    else:
-        return {
-            'status': 'error',
-            'error': 'remote_host_error'
-        }
+        dt = datetime.datetime.fromisoformat(rj['date'])
+        dt_utc = datetime.datetime.utcfromtimestamp(dt.timestamp())
+        rd['date'] = dt_utc.isoformat()
 
-    if rj['status'] == 'error' and rj['error'] == 'sensor_error':
-        return {
-            'status': 'error',
-            'error': 'sensor_error'
-        }
-    elif rj['status'] == 'error':
-        return {
-            'status': 'error',
-            'error': 'other_error'
-        }
+        try:
+            if rj['ds18b20']['temperature'] is not None:
+                rd['temperature'] = round(rj['ds18b20']['temperature'], 1)
+            else:
+                rd['temperature'] = None
+        except Exception:
+            rd['temperature'] = None
 
-    return {
-        'status': 'ok',
-        'temperature': round(rj['ds18b20']['temperature'], 1),
-        'humidity': round(rj['bme280']['humidity']),
-        'pressure': round(rj['bme280']['pressure']),
-        'dewpoint': round(((rj['bme280']['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * rj['ds18b20']['temperature'])) + (0.1 * rj['ds18b20']['temperature']) - 112, 1)
-    }
+        try:
+            if rj['bme280']['humidity'] is not None:
+                rd['humidity'] = round(rj['bme280']['humidity'])
+            else:
+                rd['humidity'] = None
+        except Exception:
+            rd['humidity'] = None
+
+        try:
+            if rj['bme280']['pressure'] is not None:
+                rd['pressure'] = round(rj['bme280']['pressure'])
+            else:
+                rd['pressure'] = None
+        except Exception:
+            rd['pressure'] = None
+
+        try:
+            if rj['ds18b20']['temperature'] is not None and rj['bme280']['humidity'] is not None:
+                rd['dewpoint'] = round(((rj['bme280']['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * rj['ds18b20']['temperature'])) + (0.1 * rj['ds18b20']['temperature']) - 112, 1)
+            else:
+                rd['dewpoint'] = None
+        except Exception:
+            rd['dewpoint'] = None
+
+        try:
+            if rj['pms5003']['pm1.0'] is not None:
+                rd['pm1.0'] = rj['pms5003']['pm1.0']
+            else:
+                rd['pm1.0'] = None
+        except Exception:
+            rd['pm1.0'] = None
+
+        try:
+            if rj['pms5003']['pm2.5'] is not None:
+                rd['pm2.5'] = rj['pms5003']['pm2.5']
+            else:
+                rd['pm2.5'] = None
+        except Exception:
+            rd['pm2.5'] = None
+
+        try:
+            if rj['pms5003']['pm10'] is not None:
+                rd['pm10'] = rj['pms5003']['pm10']
+            else:
+                rd['pm10'] = None
+        except Exception:
+            rd['pm10'] = None
+
+        try:
+            if rj['pms5003']['pm10'] is not None and rj['pms5003']['pm2.5'] is not None:
+                rd['aqi'] = round(((rj['pms5003']['pm10'] / 1.8) + (rj['pms5003']['pm2.5'] / 1.1)) / 2)
+            else:
+                rd['aqi'] = None
+        except Exception:
+            rd['aqi'] = None
+
+    res = Response(
+        json.dumps(rd, indent=4),
+        status=status,
+        mimetype='application/json'
+    )
+
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    return res
 
 
 if __name__ == '__main__':
