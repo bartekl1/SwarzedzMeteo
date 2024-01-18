@@ -18,3 +18,5 @@
 
 - [amCharts weather icons](https://www.amcharts.com/free-animated-svg-weather-icons/)
 - [Background videos](https://github.com/bartekl1/SwarzedzMeteoBackgrounds/blob/main/README.md)
+
+The website also uses [my other project](https://github.com/bartekl1/meteo).

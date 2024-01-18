@@ -74,7 +74,7 @@
             <div class="btn-group mb-2 float-start">
                 <input type="radio" class="btn-check" name="tab" id="current-readings-tab-button" target="#current-readings" checked>
                 <label class="btn btn-primary tab-label" for="current-readings-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Bieżące odczyty">
-                    <i class="bi bi-circle-fill"></i>
+                    <i class="bi bi-newspaper"></i>
                 </label>
             
                 <input type="radio" class="btn-check" name="tab" id="info-tab-button" target="#info">
@@ -213,7 +213,7 @@
                         </div>
                         <div class="fs-5">
                             <span text-id="12" class="fw-medium">Wersja</span>:
-                            <span id="version">1.0</span>
+                            <span id="version">1.1</span>
                         </div>
                         <div class="mt-2">
                             <a href="https://github.com/bartekl1/SwarzedzMeteo" target="_blank" rel="noopener" class="btn btn-primary btn-sm mb-1">
@@ -239,17 +239,21 @@
                     <div class="alert alert-info">
                         <div text-id="18">To jest amatorska stacja meteo zamontowana na balkonie.</div>
                         <div text-id="19">Stacja meteo działa na mikrokomputerze Raspberry Pi Zero W.</div>
-                        <div text-id="20">Do pomiaru temperatury wykorzystany został czujnik DS18B20, a do pomiaru wilgotności i ciśnienia czujnik BME280.</div>
+                        <div text-id="20">
+                            Do pomiaru temperatury wykorzystany został czujnik DS18B20,
+                            do pomiaru wilgotności i ciśnienia czujnik BME280,
+                            a do pomiaru jakości powietrza czujnik PMS5003.
+                        </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="info-changelog" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade bg-body-secondary rounded p-3" id="info-changelog" role="tabpanel" tabindex="0">
                     <div class="d-flex justify-content-center">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="info-acknowledgements" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade bg-body-secondary rounded p-3" id="info-acknowledgements" role="tabpanel" tabindex="0">
                     <div class="d-flex justify-content-center">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
