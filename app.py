@@ -4,6 +4,7 @@ import cachetools.func
 
 import datetime
 import json
+import os
 
 with open('configs.json') as file:
     configs = json.load(file)
@@ -153,6 +154,43 @@ def current_readings():
 
     res.headers['Access-Control-Allow-Origin'] = '*'
     return res
+
+
+@app.route('/api/announcements')
+def announcements():
+    if os.path.isfile('announcements.json'):
+        try:
+            with open('announcements.json', encoding='utf-8') as file:
+                announcements = json.load(file)
+
+            res = Response(
+                json.dumps({
+                    'status': 'ok',
+                    'announcements': announcements
+                }),
+                status=200,
+                mimetype='application/json'
+            )
+            return res
+        except Exception:
+            res = Response(
+                json.dumps({
+                    'status': 'error'
+                }),
+                status=500,
+                mimetype='application/json'
+            )
+            return res
+    else:
+        res = Response(
+            json.dumps({
+                'status': 'ok',
+                'announcements': []
+            }),
+            status=200,
+            mimetype='application/json'
+        )
+        return res
 
 
 if __name__ == '__main__':

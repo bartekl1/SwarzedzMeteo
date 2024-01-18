@@ -37,6 +37,7 @@ const dataBSTranslations = {
     Informacje: "Information",
     Udostępnij: "Share",
     Zainstaluj: "Install",
+    Ogłoszenia: "Announcements",
 };
 
 if (window.navigator.language.split("-")[0] !== "pl") {

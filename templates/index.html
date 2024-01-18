@@ -76,6 +76,12 @@
                 <label class="btn btn-primary tab-label" for="current-readings-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Bieżące odczyty">
                     <i class="bi bi-newspaper"></i>
                 </label>
+
+                <input type="radio" class="btn-check" name="tab" id="announcements-tab-button" target="#announcements">
+                <label class="btn btn-secondary tab-label" for="announcements-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Ogłoszenia">
+                    <i class="bi bi-megaphone-fill"></i>
+                    <span id="new-announcements" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
+                </label>
             
                 <input type="radio" class="btn-check" name="tab" id="info-tab-button" target="#info">
                 <label class="btn btn-secondary tab-label" for="info-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Informacje">
@@ -168,6 +174,25 @@
                     <span text-id="6">Wystąpił błąd</span>
                 </div>
             </div>
+        </div>
+
+        <div class="frame d-none" id="announcements">
+            <div id="announcements-loading" class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="alert alert-danger d-flex m-0 d-none" id="announcements-error">
+                <div class="fs-1">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="ms-3 mt-2 fs-4">
+                    <span text-id="6">Wystąpił błąd</span>
+                </div>
+            </div>
+
+            <div id="announcements-content"></div>
         </div>
 
         <div class="frame d-none" id="info">

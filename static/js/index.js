@@ -72,9 +72,69 @@ function loadCurrentReadings() {
     });
 }
 
+function loadAnnouncements() {
+    fetch("/api/announcements").then((res) => { return res.json() }).then((json) => {
+        if (json.status === "ok") {
+            json.announcements.forEach((a) => {
+                var converter = new showdown.Converter();
+                var content = converter.makeHtml(a.message);
+
+                var announcement = document.createElement("div");
+                announcement.classList.add("announcement");
+                announcement.setAttribute("announcement-id", a.id);
+                announcement.innerHTML = `
+                <div class="alert alert-${a.style} d-flex mb-3">
+                    <div class="fs-2">
+                        <i class="bi bi-${a.icon}"></i>
+                    </div>
+                    <div class="ms-3 fs-6">
+                        ${content}
+                    </div>
+                </div>`;
+
+                document.querySelector("#announcements-content").append(announcement);
+            });
+
+            if (json.announcements.length !== 0) {
+                if (localStorage.getItem("last-seen-announcement-id") !== json.announcements[0].id) {
+                    if (localStorage.getItem("last-seen-announcement-id") === null) {
+                        document.querySelector("#new-announcements").innerHTML = json.announcements.length;
+                    } else {
+                        document.querySelector("#new-announcements").innerHTML = json.announcements.length;
+                        for (var i = 0; i < json.announcements.length; i++) {
+                            if (localStorage.getItem("last-seen-announcement-id") === json.announcements[i].id) {
+                                document.querySelector("#new-announcements").innerHTML = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (document.querySelector("#new-announcements").innerHTML > 99) {
+                        document.querySelector("#new-announcements").innerHTML = "99+";
+                    }
+                }
+
+                document.querySelector("#announcements-tab-button").addEventListener("click", () => {
+                    localStorage.setItem("last-seen-announcement-id", document.querySelector(".announcement").getAttribute("announcement-id"));
+                    document.querySelector("#new-announcements").innerHTML = "";
+                });
+            }
+
+            document.querySelector("#announcements-loading").classList.add("d-none");
+        } else if (json.status === "error") {
+            document.querySelector("#announcements-loading").classList.add("d-none");
+            document.querySelector("#announcements-error").classList.remove("d-none");
+        }
+    }).catch((err) => {
+        document.querySelector("#announcements-loading").classList.add("d-none");
+        document.querySelector("#announcements-error").classList.remove("d-none");
+    });
+}
+
 function tryToLoad() {
     if (navigator.onLine) {
         loadCurrentReadings();
+        loadAnnouncements();
 
         setTimeout(() => {
             var videoDiv = document.createElement("div");
