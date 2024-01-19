@@ -1,4 +1,4 @@
-# Swarzędz Meteo
+# ![Icon](.github/img/icon30.png) Swarzędz Meteo
 
 Amatorska stacja meteo w Swarzędzu
 
@@ -7,9 +7,12 @@ Amatorska stacja meteo w Swarzędzu
 ![GitHub watchers](https://img.shields.io/github/watchers/bartekl1/SwarzedzMeteo?style=flat-square)
 ![GitHub forks](https://img.shields.io/github/forks/bartekl1/SwarzedzMeteo?style=flat-square)
 
-[🌐 Strona](https://swarzedzmeteo.pythonanywhere.com/)
+[🌐 Strona internetowa](https://swarzedzmeteo.pythonanywhere.com/)
+[📖 Dokumentacja](https://github.com/bartekl1/SwarzedzMeteo/wiki)
 [🕑 Rejestr zmian](CHANGELOG_PL.md)
 [🎁 Podziękowania](ACKNOWLEDGEMENTS_PL.md)
+
+![Baner](.github/img/baner.png)
 
 To jest amatorska stacja meteo zamontowana na balkonie. \
 Stacja meteo działa na mikrokomputerze Raspberry Pi Zero W. \
