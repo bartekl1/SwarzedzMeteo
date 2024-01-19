@@ -47,3 +47,23 @@
 .badge {
     z-index: 10;
 }
+
+.frac {
+    display: inline-block;
+    position: relative;
+    vertical-align: sub;
+    letter-spacing: 0.001em;
+    text-align: center;
+    font-weight: 500;
+
+    font-size: 50%;
+}
+
+.frac > span {
+    display: block;
+    padding: 0.1em;
+}
+
+.frac span.frac-denominator {
+    border-top: thin solid black;
+}

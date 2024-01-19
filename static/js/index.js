@@ -1,3 +1,8 @@
+const pmUnit = `<div class="frac">
+<span>μg</span>
+<span class="frac-denominator">m³</span>
+</div>`;
+
 function getRandomVideo() {
     const min = 1;
     const max = 17;
@@ -39,11 +44,11 @@ function loadCurrentReadings() {
                 (json.dewpoint % 1 === 0) ? ".0" : ""
             }℃` : '<i class="bi bi-x-circle text-danger"></i>';
 
-            document.querySelector("#pm1-0").innerHTML = json["pm1.0"] !== null ? `${json["pm1.0"]} μg/m³`
+            document.querySelector("#pm1-0").innerHTML = json["pm1.0"] !== null ? `${json["pm1.0"]} ${pmUnit}`
                 : '<i class="bi bi-x-circle text-danger"></i>';
-            document.querySelector("#pm2-5").innerHTML = json["pm2.5"] !== null ? `${json["pm2.5"]} μg/m³`
+            document.querySelector("#pm2-5").innerHTML = json["pm2.5"] !== null ? `${json["pm2.5"]} ${pmUnit}`
                 : '<i class="bi bi-x-circle text-danger"></i>';
-            document.querySelector("#pm10").innerHTML = json["pm10"] !== null ? `${json["pm10"]} μg/m³`
+            document.querySelector("#pm10").innerHTML = json["pm10"] !== null ? `${json["pm10"]} ${pmUnit}`
                 : '<i class="bi bi-x-circle text-danger"></i>';
             document.querySelector("#aqi").innerHTML = json["aqi"] !== null ? `${json["aqi"]}`
                 : '<i class="bi bi-x-circle text-danger"></i>';
