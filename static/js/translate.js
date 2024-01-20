@@ -39,6 +39,10 @@ const dataBSTranslations = {
     Udostępnij: "Share",
     Zainstaluj: "Install",
     Ogłoszenia: "Announcements",
+    "Dla deweloperów": "For developers",
+    Skopiuj: "Copy",
+    Otwórz: "Open",
+    Dokumentacja: "Documentation",
 };
 
 if (window.navigator.language.split("-")[0] !== "pl") {
@@ -70,5 +74,9 @@ if (window.navigator.language.split("-")[0] !== "pl") {
             "data-bs-original-title",
             dataBSTranslations[e.getAttribute("data-bs-original-title")]
         );
+    });
+
+    document.querySelectorAll("[en-href]").forEach((e) => {
+        e.href = e.getAttribute("en-href");
     });
 }

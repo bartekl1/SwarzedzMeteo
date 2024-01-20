@@ -274,3 +274,27 @@ window.addEventListener("appinstalled", () => {
 
     document.querySelector("#install").classList.add("d-none");
 });
+
+var url = new URL(window.location.href);
+
+document.querySelectorAll(".api-url").forEach((e) => {
+    e.value = url.origin + e.value;
+})
+
+document.querySelectorAll(".copy-api").forEach((e) => {
+    e.addEventListener("click", (evt) => {
+        navigator.clipboard.writeText(
+            evt.currentTarget.parentElement.querySelector("input").value
+        );
+
+        evt.currentTarget.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+
+        setTimeout(
+            (el) => {
+                el.innerHTML = '<i class="bi bi-clipboard"></i>';
+            },
+            2000,
+            evt.currentTarget
+        );
+    });
+});
