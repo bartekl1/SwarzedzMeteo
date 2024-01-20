@@ -17,6 +17,7 @@
 ## Other
 
 - [amCharts weather icons](https://www.amcharts.com/free-animated-svg-weather-icons/)
+- [JetBrains Mono](https://www.jetbrains.com/lp/mono/)
 - [Background videos](https://github.com/bartekl1/SwarzedzMeteoBackgrounds/blob/main/README.md)
 
 The website also uses [my other project](https://github.com/bartekl1/meteo).
