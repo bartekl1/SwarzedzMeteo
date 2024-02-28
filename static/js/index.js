@@ -35,14 +35,14 @@ function loadCurrentReadings() {
         if (json.status === "ok") {
             document.querySelector("#temperature").innerHTML = json.temperature !== null ? `${json.temperature}${
                 (json.temperature % 1 === 0) ? ".0" : ""
-            }℃` : '<i class="bi bi-x-circle text-danger"></i>';
+            }°C` : '<i class="bi bi-x-circle text-danger"></i>';
             document.querySelector("#humidity").innerHTML = json.humidity !== null ? `${json.humidity}%`
                 : '<i class="bi bi-x-circle text-danger"></i>';
             document.querySelector("#pressure").innerHTML = json.pressure !== null ? `${json.pressure} hPa`
                 : '<i class="bi bi-x-circle text-danger"></i>';
             document.querySelector("#dewpoint").innerHTML = json.dewpoint !== null ? `${json.dewpoint}${
                 (json.dewpoint % 1 === 0) ? ".0" : ""
-            }℃` : '<i class="bi bi-x-circle text-danger"></i>';
+            }°C` : '<i class="bi bi-x-circle text-danger"></i>';
 
             document.querySelector("#pm1-0").innerHTML = json["pm1.0"] !== null ? `${json["pm1.0"]} ${pmUnit}`
                 : '<i class="bi bi-x-circle text-danger"></i>';

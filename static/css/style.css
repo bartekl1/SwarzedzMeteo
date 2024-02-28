@@ -74,5 +74,10 @@
 }
 
 .frac span.frac-denominator {
-    border-top: thin solid black;
+    border-top: thin solid;
+}
+
+.link-no-decoration {
+    color: unset;
+    text-decoration: unset;
 }

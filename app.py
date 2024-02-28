@@ -19,6 +19,11 @@ def index():
     return render_template('index.html', configs=configs)
 
 
+@app.route('/widget')
+def widget():
+    return render_template('widget.html')
+
+
 @app.route('/manifest.json')
 def manifest():
     return send_file('static/manifest.json')

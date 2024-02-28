@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pl" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Swarzędz Meteo</title>
+
+    <meta name="description" content="Amatorska stacja meteo w Swarzędzu">
+    <meta name="keywords" content="Swarzędz Meteo, Swarzędz pogoda, Pogoda w Swarzędzu">
+    <meta name="author" content="Bartek L">
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" integrity="sha384-c9MVH4yRDZMY+bSlECVISp9U4xBl1dKb5z4x8IgF6lBKTHsh1AtxHBfHiiA+S/Nr" crossorigin="anonymous">
+
+    <script src="/static/js/theme.js"></script>
+
+    <meta name="robots" content="noindex">
+</head>
+<body class="pt-2 px-3 pb-4">
+    <h1 class="h3 text-center">
+        <a href="/" target="_blank" class="link-no-decoration">
+            <span>Swarzędz Meteo</span>
+            <img src="/static/img/icon_animated.svg" width="40px" height="40px">
+        </a>
+    </h1>
+
+    <div class="d-flex justify-content-center" id="loading">
+        <div class="spinner-border text-primary" role="status" style="width: 25px; height: 25px;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div class="alert alert-danger d-flex m-0 d-none" id="current-readings-error">
+        <div class="fs-3">
+            <i class="bi bi-x-circle"></i>
+        </div>
+        <div class="ms-3 mt-1 fs-6">
+            <span text-id="6">Wystąpił błąd</span>
+        </div>
+    </div>
+
+    <div id="current-readings-container" class="d-none">
+        <div class="fs-5" id="temperature-div">
+            <i class="bi bi-thermometer-high"></i>
+            <span text-id="2">Temperatura</span>:
+            <div class="d-inline" id="temperature"></div>
+        </div>
+        <div class="fs-5" id="humidity-div">
+            <i class="bi bi-water"></i>
+            <span text-id="3">Wilgotność</span>:
+            <div class="d-inline" id="humidity"></div>
+        </div>
+        <div class="fs-5" id="pressure-div">
+            <i class="bi bi-speedometer"></i>
+            <span text-id="4">Ciśnienie</span>:
+            <div class="d-inline" id="pressure"></div>
+        </div>
+        <div class="fs-5" id="dewpoint-div">
+            <i class="bi bi-droplet-fill"></i>
+            <span text-id="5">Punkt rosy</span>:
+            <div class="d-inline" id="dewpoint"></div>
+        </div>
+        <div class="fs-5" id="pm1-0-div">
+            <i class="bi bi-cloud-haze2"></i>
+            <span>PM 1.0</span>:
+            <div class="d-inline" id="pm1-0"></div>
+        </div>
+        <div class="fs-5" id="pm2-5-div">
+            <i class="bi bi-cloud-haze2"></i>
+            <span>PM 2.5</span>:
+            <div class="d-inline" id="pm2-5"></div>
+        </div>
+        <div class="fs-5" id="pm10-div">
+            <i class="bi bi-cloud-haze2"></i>
+            <span>PM 10</span>:
+            <div class="d-inline" id="pm10"></div>
+        </div>
+        <div class="fs-5" id="aqi-div">
+            <i class="bi bi-cloud-haze2"></i>
+            <span>AQI</span>:
+            <div class="d-inline" id="aqi"></div>
+        </div>
+    </div>
+    
+    <script src="/static/js/translate.js"></script>
+    <script src="/static/js/error.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" integrity="sha384-GP2+CwBlakZSDJUr+E4JvbxpM75i1i8+RKkieQxzuyDZLG+5105E1OfHIjzcXyWH" crossorigin="anonymous"></script>
+
+    <script src="/static/js/widget.js"></script>
+</body>
+</html>
