@@ -2,6 +2,7 @@
 
 Amateur meteorological station in Swarzędz
 
+![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/m796142229-4aa21855eb01f1ddd0b04e07?style=flat-square)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/bartekl1/SwarzedzMeteo?style=flat-square)
 ![GitHub Repo stars](https://img.shields.io/github/stars/bartekl1/SwarzedzMeteo?style=flat-square)
 ![GitHub watchers](https://img.shields.io/github/watchers/bartekl1/SwarzedzMeteo?style=flat-square)
