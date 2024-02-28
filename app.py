@@ -171,7 +171,6 @@ def announcements():
                 status=200,
                 mimetype='application/json'
             )
-            return res
         except Exception:
             res = Response(
                 json.dumps({
@@ -180,7 +179,6 @@ def announcements():
                 status=500,
                 mimetype='application/json'
             )
-            return res
     else:
         res = Response(
             json.dumps({
@@ -190,7 +188,55 @@ def announcements():
             status=200,
             mimetype='application/json'
         )
-        return res
+
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    return res
+
+
+@app.route('/api/status')
+@cachetools.func.ttl_cache(maxsize=128, ttl=ttl)
+def status():
+    try:
+        r = requests.get(f'{configs["remote_url"]}/api/current_reading')
+        station_up = True
+    except Exception:
+        station_up = False
+    
+    if station_up:
+        if r.status_code == 200:
+            rj = r.json()
+        else:
+            station_up = False
+    
+    if station_up:
+        ds18b20 = rj['ds18b20']['temperature'] is not None
+        bme280 = rj['bme280']['humidity'] is not None and \
+            rj['bme280']['pressure'] is not None
+        pms5003 = rj['pms5003']['pm1.0'] is not None and \
+            rj['pms5003']['pm2.5'] is not None and \
+            rj['pms5003']['pm10'] is not None
+        everything = station_up and ds18b20 and bme280 and pms5003
+    else:
+        ds18b20 = False
+        bme280 = False
+        pms5003 = False
+        everything = False
+
+    res = Response(
+        json.dumps({
+            'status': 'ok',
+            'station': station_up,
+            'ds18b20': ds18b20,
+            'bme280': bme280,
+            'pms5003': pms5003,
+            'everything': everything
+        }),
+        status=200,
+        mimetype='application/json'
+    )
+
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    return res
 
 
 if __name__ == '__main__':
