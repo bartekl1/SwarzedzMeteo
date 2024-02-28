@@ -103,7 +103,7 @@ function loadAnnouncements() {
             if (json.announcements.length !== 0) {
                 if (localStorage.getItem("last-seen-announcement-id") !== json.announcements[0].id) {
                     if (localStorage.getItem("last-seen-announcement-id") === null) {
-                        document.querySelector("#new-announcements").innerHTML = json.announcements.length;
+                        document.querySelector("#new-announcements").innerHTML = "";
                     } else {
                         document.querySelector("#new-announcements").innerHTML = json.announcements.length;
                         for (var i = 0; i < json.announcements.length; i++) {
@@ -123,6 +123,10 @@ function loadAnnouncements() {
                     localStorage.setItem("last-seen-announcement-id", document.querySelector(".announcement").getAttribute("announcement-id"));
                     document.querySelector("#new-announcements").innerHTML = "";
                 });
+
+                if (document.querySelector("#new-announcements").innerHTML === "") {
+                    localStorage.setItem("last-seen-announcement-id", document.querySelector(".announcement").getAttribute("announcement-id"));
+                }
             }
 
             document.querySelector("#announcements-loading").classList.add("d-none");
