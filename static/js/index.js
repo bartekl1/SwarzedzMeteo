@@ -285,7 +285,7 @@ document.querySelectorAll(".api-url").forEach((e) => {
     e.value = url.origin + e.value;
 });
 
-document.querySelector(".iframe-code").value = `<iframe src="${url.origin}/widget" frameBorder="0" height="200" width="500"></iframe>`;
+document.querySelector(".iframe-code").value = `<iframe src="${url.origin}/widget" frameBorder="0" height="340" width="500"></iframe>`;
 
 document.querySelectorAll(".copy-api").forEach((e) => {
     e.addEventListener("click", (evt) => {
