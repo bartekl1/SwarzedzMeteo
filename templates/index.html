@@ -201,22 +201,43 @@
         </div>
 
         <div class="frame d-none text-dark" id="for-devs">
-            <div class="h3">API</div>
+            <div class="mb-3">
+                <div class="h3"><i class="bi bi-globe"></i> API</div>
+                
+                <div class="h4"><i class="bi bi-newspaper"></i> <span text-id="7">Bieżące odczyty</span></div>
 
-            <div class="h4"><i class="bi bi-newspaper"></i> <span text-id="7">Bieżące odczyty</span></div>
+                <div class="input-group">
+                    <span class="input-group-text code-font">GET</span>
+                    <input type="text" class="form-control api-url code-font" value="/api/current_readings" readonly>
+                    <button class="btn btn-secondary copy-api" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Skopiuj">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <a class="btn btn-secondary open-api" target="_blank" rel="noopener" href="/api/current_readings" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Otwórz">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                    <a class="btn btn-secondary docs-api" target="_blank" rel="noopener" href="https://github.com/bartekl1/SwarzedzMeteo/wiki/(PL)-API#bie%C5%BC%C4%85ce-odczyty" en-href="https://github.com/bartekl1/SwarzedzMeteo/wiki/API#current-readings" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Dokumentacja">
+                        <i class="bi bi-book"></i>
+                    </a>
+                </div>
+            </div>
 
-            <div class="input-group mb-3">
-                <span class="input-group-text code-font">GET</span>
-                <input type="text" class="form-control api-url code-font" value="/api/current_readings" readonly>
-                <button class="btn btn-secondary copy-api" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Skopiuj">
-                    <i class="bi bi-clipboard"></i>
-                </button>
-                <a class="btn btn-secondary open-api" target="_blank" rel="noopener" href="/api/current_readings" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Otwórz">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-                <a class="btn btn-secondary docs-api" target="_blank" rel="noopener" href="https://github.com/bartekl1/SwarzedzMeteo/wiki/(PL)-API#bie%C5%BC%C4%85ce-odczyty" en-href="https://github.com/bartekl1/SwarzedzMeteo/wiki/API#current-readings" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Dokumentacja">
-                    <i class="bi bi-book"></i>
-                </a>
+            <div class="mb-3">
+                <div class="h3"><i class="bi bi-window"></i> Iframe</div>
+
+                <div class="h4"><i class="bi bi-newspaper"></i> <span text-id="7">Bieżące odczyty</span></div>
+
+                <div class="input-group">
+                    <input type="text" class="form-control iframe-code code-font" value="/widget" readonly>
+                    <button class="btn btn-secondary copy-api" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Skopiuj">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <!-- <a class="btn btn-secondary open-api" target="_blank" rel="noopener" href="/widget" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Otwórz">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a> -->
+                    <!-- <a class="btn btn-secondary docs-api" target="_blank" rel="noopener" href="https://github.com/bartekl1/SwarzedzMeteo/wiki/(PL)-API#bie%C5%BC%C4%85ce-odczyty" en-href="https://github.com/bartekl1/SwarzedzMeteo/wiki/API#current-readings" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Dokumentacja">
+                        <i class="bi bi-book"></i>
+                    </a> -->
+                </div>
             </div>
         </div>
 
