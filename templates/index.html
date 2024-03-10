@@ -77,6 +77,11 @@
                     <i class="bi bi-newspaper"></i>
                 </label>
 
+                <input type="radio" class="btn-check" name="tab" id="archive-readings-tab-button" target="#archive-readings">
+                <label class="btn btn-secondary tab-label" for="archive-readings-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Archiwalne odczyty">
+                    <i class="bi bi-archive-fill"></i>
+                </label>
+
                 <input type="radio" class="btn-check" name="tab" id="announcements-tab-button" target="#announcements">
                 <label class="btn btn-secondary tab-label" for="announcements-tab-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Ogłoszenia">
                     <i class="bi bi-megaphone-fill"></i>
@@ -179,6 +184,10 @@
                     <span text-id="6">Wystąpił błąd</span>
                 </div>
             </div>
+        </div>
+
+        <div class="frame d-none" id="archive-readings">
+            archive
         </div>
 
         <div class="frame d-none" id="announcements">

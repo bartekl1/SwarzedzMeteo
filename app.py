@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file, Response
+from flask import Flask, render_template, send_file, Response, request
 import requests
 import cachetools.func
 
@@ -150,6 +150,142 @@ def current_readings():
                 rd['aqi'] = None
         except Exception:
             rd['aqi'] = None
+
+    res = Response(
+        json.dumps(rd, indent=4),
+        status=status,
+        mimetype='application/json'
+    )
+
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    return res
+
+
+@app.route('/api/archive_readings')
+def archive_readings():
+    try:
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+
+        start_date_dt = datetime.datetime.fromisoformat(start_date)
+        end_date_dt = datetime.datetime.fromisoformat(end_date)
+    except Exception:
+        start_date = None
+        end_date = None
+
+        start_date_dt = None
+        end_date_dt = None
+
+    status = 200
+
+    if start_date is None or end_date is None:
+        status = 400
+        rd = {
+            'status': 'error',
+            'error': 'start_date_and_end_date_required'
+        }
+
+    if status == 200:
+        if start_date_dt.minute > 0 or start_date_dt.second > 0 or start_date_dt.microsecond > 0:
+            start_date_dt = datetime.datetime(year=start_date_dt.year,
+                                              month=start_date_dt.month,
+                                              day=start_date_dt.day,
+                                              hour=start_date_dt.hour) + \
+                            datetime.timedelta(hours=1)
+        if end_date_dt.minute > 0 or end_date_dt.second > 0 or end_date_dt.microsecond > 0:
+            end_date_dt = datetime.datetime(year=end_date_dt.year,
+                                            month=end_date_dt.month,
+                                            day=end_date_dt.day,
+                                            hour=end_date_dt.hour)
+        end_date_dt = end_date_dt + datetime.timedelta(hours=1)
+
+        try:
+            r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
+                            params={
+                                'startDate': start_date_dt.isoformat(),
+                                'endDate': end_date_dt.isoformat()
+                            })
+        except Exception:
+            rd = {
+                'status': 'error',
+                'error': 'internal_error'
+            }
+            status = 500
+
+    if status == 200:
+        if r.status_code == 200:
+            rj = r.json()
+        else:
+            rd = {
+                'status': 'error',
+                'error': 'internal_error'
+            }
+            status = 500
+
+    if status == 200:
+        readings = {}
+
+        for r in rj:
+            dt = datetime.datetime.fromisoformat(r['read_time'])
+            dt = datetime.datetime.utcfromtimestamp(dt.timestamp())
+            dt = datetime.datetime(year=dt.year,
+                                   month=dt.month,
+                                   day=dt.day,
+                                   hour=dt.hour)
+            dt_iso = dt.isoformat()
+
+            if dt_iso not in readings.keys():
+                readings[dt_iso] = {
+                    'temperature': [],
+                    'humidity': [],
+                    'pressure': [],
+                    'pm1.0': [],
+                    'pm2.5': [],
+                    'pm10': []
+                }
+
+            if r['ds18b20_temperature'] is not None:
+                readings[dt_iso]['temperature'].append(r['ds18b20_temperature'])
+            if r['bme280_humidity'] is not None:
+                readings[dt_iso]['humidity'].append(r['bme280_humidity'])
+            if r['bme280_pressure'] is not None:
+                readings[dt_iso]['pressure'].append(r['bme280_pressure'])
+            if r['pms5003_pm_1_0'] is not None:
+                readings[dt_iso]['pm1.0'].append(r['pms5003_pm_1_0'])
+            if r['pms5003_pm_2_5'] is not None:
+                readings[dt_iso]['pm2.5'].append(r['pms5003_pm_2_5'])
+            if r['pms5003_pm_10'] is not None:
+                readings[dt_iso]['pm10'].append(r['pms5003_pm_10'])
+
+        for date in readings.keys():
+            for key in ['temperature', 'humidity', 'pressure', 'pm1.0', 'pm2.5', 'pm10']:
+                readings[date][key] = sum(readings[date][key]) / len(readings[date][key])
+
+        for date in readings.keys():
+            readings[date]['dewpoint'] = ((readings[date]['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * readings[date]['temperature'])) + (0.1 * readings[date]['temperature']) - 112
+            readings[date]['aqi'] = ((readings[date]['pm10'] / 1.8) + (readings[date]['pm2.5'] / 1.1)) / 2
+
+        for date in readings.keys():
+            readings[date]['temperature'] = round(readings[date]['temperature'], 1)
+            readings[date]['humidity'] = round(readings[date]['humidity'])
+            readings[date]['pressure'] = round(readings[date]['pressure'])
+            readings[date]['dewpoint'] = round(readings[date]['dewpoint'], 1)
+            readings[date]['pm1.0'] = round(readings[date]['pm1.0'])
+            readings[date]['pm2.5'] = round(readings[date]['pm2.5'])
+            readings[date]['pm10'] = round(readings[date]['pm10'])
+            readings[date]['aqi'] = round(readings[date]['aqi'])
+
+        readings2 = []
+
+        for key, value in readings.items():
+            readings2.append(value)
+            readings2[-1]['date'] = key
+
+    if status == 200:
+        rd = {
+            'status': 'ok',
+            'readings': readings2
+        }
 
     res = Response(
         json.dumps(rd, indent=4),

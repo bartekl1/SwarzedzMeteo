@@ -35,6 +35,7 @@ const dataBSTranslations = {
     "Strona internetowa": "Website",
     "Profil GitHub": "GitHub profile",
     "Bieżące odczyty": "Current readings",
+    "Archiwalne odczyty": "Archive readings",
     Informacje: "Information",
     Udostępnij: "Share",
     Zainstaluj: "Install",
