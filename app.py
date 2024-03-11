@@ -169,6 +169,18 @@ def archive_readings():
 
         start_date_dt = datetime.datetime.fromisoformat(start_date)
         end_date_dt = datetime.datetime.fromisoformat(end_date)
+
+        start_date_dt = datetime.datetime(year=start_date_dt.year,
+                                            month=start_date_dt.month,
+                                            day=start_date_dt.day,
+                                            hour=0,
+                                            minute=0)
+        end_date_dt = datetime.datetime(year=end_date_dt.year,
+                                        month=end_date_dt.month,
+                                        day=end_date_dt.day,
+                                        hour=23,
+                                        minute=59)
+        end_date_dt += datetime.timedelta(days=1)
     except Exception:
         start_date = None
         end_date = None
@@ -186,19 +198,6 @@ def archive_readings():
         }
 
     if status == 200:
-        if start_date_dt.minute > 0 or start_date_dt.second > 0 or start_date_dt.microsecond > 0:
-            start_date_dt = datetime.datetime(year=start_date_dt.year,
-                                              month=start_date_dt.month,
-                                              day=start_date_dt.day,
-                                              hour=start_date_dt.hour) + \
-                            datetime.timedelta(hours=1)
-        if end_date_dt.minute > 0 or end_date_dt.second > 0 or end_date_dt.microsecond > 0:
-            end_date_dt = datetime.datetime(year=end_date_dt.year,
-                                            month=end_date_dt.month,
-                                            day=end_date_dt.day,
-                                            hour=end_date_dt.hour)
-        end_date_dt = end_date_dt + datetime.timedelta(hours=1)
-
         try:
             r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
                             params={
@@ -278,8 +277,11 @@ def archive_readings():
         readings2 = []
 
         for key, value in readings.items():
-            readings2.append(value)
-            readings2[-1]['date'] = key
+            if datetime.datetime.fromisoformat(start_date).date() <= \
+                datetime.datetime.fromisoformat(key).date() <= \
+                datetime.datetime.fromisoformat(end_date).date():
+                readings2.append(value)
+                readings2[-1]['date'] = key
 
     if status == 200:
         rd = {
