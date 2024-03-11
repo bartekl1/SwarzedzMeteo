@@ -81,3 +81,8 @@
     color: unset;
     text-decoration: unset;
 }
+
+#archive-readings-start-date,
+#archive-readings-end-date {
+    max-width: 150px;
+}

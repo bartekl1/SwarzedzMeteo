@@ -77,6 +77,55 @@ function loadCurrentReadings() {
     });
 }
 
+function loadArchiveReadings() {
+    document.querySelector("#archive-readings-loading").classList.remove("d-none");
+    document.querySelector("#archive-readings-table-div").classList.add("d-none");
+    document.querySelector("#archive-readings-error").classList.add("d-none");
+
+    fetch("/api/archive_readings?" + new URLSearchParams({
+        start_date: document.querySelector("#archive-readings-start-date").value,
+        end_date: document.querySelector("#archive-readings-end-date").value,
+    })).then((res) => { return res.json() }).then((json) => {
+        if (json.status === "ok") {
+            var tbody = document.querySelector("#archive-readings-table-div").querySelector("tbody");
+
+            tbody.innerHTML = "";
+
+            json.readings.forEach((reading) => {
+                var row = document.createElement("tr");
+                row.innerHTML = `
+                <th scope="row">${new Date(reading.date).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric"
+                  })}</th>
+                <td>${reading.temperature !== null ? reading.temperature.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading.humidity !== null ? reading.humidity + "%" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading.pressure !== null ? reading.pressure + " hPa" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading.dewpoint !== null ? reading.dewpoint.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading["pm1.0"] !== null ? reading["pm1.0"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading["pm2.5"] !== null ? reading["pm2.5"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading["pm10"] !== null ? reading["pm10"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                <td>${reading.aqi !== null ? reading.aqi : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                `;
+                tbody.append(row);
+            })
+
+            document.querySelector("#archive-readings-table-div").classList.remove("d-none");
+            document.querySelector("#archive-readings-loading").classList.add("d-none");
+        } else if (json.status === "error") {
+            document.querySelector("#archive-readings-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-error").classList.remove("d-none");
+        }
+    })
+    // .catch((err) => {
+    //     document.querySelector("#archive-readings-loading").classList.add("d-none");
+    //     document.querySelector("#archive-readings-error").classList.remove("d-none");
+    // });
+}
+
 function loadAnnouncements() {
     fetch("/api/announcements").then((res) => { return res.json() }).then((json) => {
         if (json.status === "ok") {
@@ -304,3 +353,11 @@ document.querySelectorAll(".copy-api").forEach((e) => {
         );
     });
 });
+
+document.querySelector("#archive-readings-start-date").valueAsDate = new Date();
+document.querySelector("#archive-readings-end-date").valueAsDate = new Date();
+
+document.querySelector("#archive-readings-start-date").addEventListener("change", loadArchiveReadings);
+document.querySelector("#archive-readings-end-date").addEventListener("change", loadArchiveReadings);
+
+loadArchiveReadings();

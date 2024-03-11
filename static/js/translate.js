@@ -21,6 +21,7 @@ const textTranslations = [
     "The weather station runs on a Raspberry Pi Zero W microcomputer.",
     "A DS18B20 sensor was used to measure temperature, a BME280 sensor for humidity and pressure, and PMS5003 sensor for air quality.",
     "Documentation",
+    "Date",
 ];
 
 const titleTranslations = {};

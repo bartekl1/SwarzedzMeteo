@@ -187,7 +187,47 @@
         </div>
 
         <div class="frame d-none" id="archive-readings">
-            archive
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                <input type="date" class="form-control" id="archive-readings-start-date">
+                <span class="input-group-text"><i class="bi bi-dash"></i></span>
+                <input type="date" class="form-control" id="archive-readings-end-date">
+            </div>
+
+            <div class="d-flex justify-content-center my-3" id="archive-readings-loading">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="table-responsive d-none mt-2" id="archive-readings-table-div">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col"><i class="bi bi-calendar"></i> <span text-id="22">Data</span></th>
+                            <th scope="col"><i class="bi bi-thermometer-high"></i> <span text-id="2">Temperatura</span></th>
+                            <th scope="col"><i class="bi bi-water"></i> <span text-id="3">Wilgotność</span></th>
+                            <th scope="col"><i class="bi bi-speedometer"></i> <span text-id="4">Ciśnienie</span></th>
+                            <th scope="col"><i class="bi bi-droplet-fill"></i> <span text-id="5">Punkt rosy</span></th>
+                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 1.0</span></th>
+                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 2.5</span></th>
+                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 10</span></th>
+                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>AQI</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-danger d-flex m-0 d-none mt-2" id="archive-readings-error">
+                <div class="fs-1">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="ms-3 mt-2 fs-4">
+                    <span text-id="6">Wystąpił błąd</span>
+                </div>
+            </div>
         </div>
 
         <div class="frame d-none" id="announcements">

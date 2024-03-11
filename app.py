@@ -258,21 +258,30 @@ def archive_readings():
 
         for date in readings.keys():
             for key in ['temperature', 'humidity', 'pressure', 'pm1.0', 'pm2.5', 'pm10']:
-                readings[date][key] = sum(readings[date][key]) / len(readings[date][key])
+                if len(readings[date][key]) != 0:
+                    readings[date][key] = sum(readings[date][key]) / len(readings[date][key])
+                else:
+                    readings[date][key] = None
 
         for date in readings.keys():
-            readings[date]['dewpoint'] = ((readings[date]['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * readings[date]['temperature'])) + (0.1 * readings[date]['temperature']) - 112
-            readings[date]['aqi'] = ((readings[date]['pm10'] / 1.8) + (readings[date]['pm2.5'] / 1.1)) / 2
+            if readings[date]['humidity'] is not None and readings[date]['temperature'] is not None:
+                readings[date]['dewpoint'] = ((readings[date]['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * readings[date]['temperature'])) + (0.1 * readings[date]['temperature']) - 112
+            else:
+                readings[date]['dewpoint'] = None
+            if readings[date]['pm10'] is not None and readings[date]['pm2.5'] is not None:
+                readings[date]['aqi'] = ((readings[date]['pm10'] / 1.8) + (readings[date]['pm2.5'] / 1.1)) / 2
+            else:
+                readings[date]['aqi'] = None
 
         for date in readings.keys():
-            readings[date]['temperature'] = round(readings[date]['temperature'], 1)
-            readings[date]['humidity'] = round(readings[date]['humidity'])
-            readings[date]['pressure'] = round(readings[date]['pressure'])
-            readings[date]['dewpoint'] = round(readings[date]['dewpoint'], 1)
-            readings[date]['pm1.0'] = round(readings[date]['pm1.0'])
-            readings[date]['pm2.5'] = round(readings[date]['pm2.5'])
-            readings[date]['pm10'] = round(readings[date]['pm10'])
-            readings[date]['aqi'] = round(readings[date]['aqi'])
+            readings[date]['temperature'] = round(readings[date]['temperature'], 1) if readings[date]['temperature'] is not None else None
+            readings[date]['humidity'] = round(readings[date]['humidity']) if readings[date]['humidity'] is not None else None
+            readings[date]['pressure'] = round(readings[date]['pressure']) if readings[date]['pressure'] is not None else None
+            readings[date]['dewpoint'] = round(readings[date]['dewpoint'], 1) if readings[date]['dewpoint'] is not None else None
+            readings[date]['pm1.0'] = round(readings[date]['pm1.0']) if readings[date]['pm1.0'] is not None else None
+            readings[date]['pm2.5'] = round(readings[date]['pm2.5']) if readings[date]['pm2.5'] is not None else None
+            readings[date]['pm10'] = round(readings[date]['pm10']) if readings[date]['pm10'] is not None else None
+            readings[date]['aqi'] = round(readings[date]['aqi']) if readings[date]['aqi'] is not None else None
 
         readings2 = []
 
