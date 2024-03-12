@@ -187,11 +187,104 @@
         </div>
 
         <div class="frame d-none" id="archive-readings">
-            <div class="input-group">
+            <div class="input-group mb-2">
                 <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                 <input type="date" class="form-control" id="archive-readings-start-date">
                 <span class="input-group-text"><i class="bi bi-dash"></i></span>
                 <input type="date" class="form-control" id="archive-readings-end-date">
+            </div>
+
+            <ul class="nav nav-pills mb-2">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#archive-readings-table-tab" type="button"><i class="bi bi-table"></i> <span text-id="23">Tabela</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#archive-readings-chart-tab" type="button"><i class="bi bi-graph-up"></i> <span text-id="24">Wykres</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#archive-readings-download-tab" type="button"><i class="bi bi-download"></i> <span text-id="25">Pobierz</span></button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="archive-readings-table-tab">
+                    <div class="table-responsive d-none mt-2" id="archive-readings-table-div">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><i class="bi bi-calendar"></i> <span text-id="22">Data</span></th>
+                                    <th scope="col"><i class="bi bi-thermometer-high"></i> <span text-id="2">Temperatura</span></th>
+                                    <th scope="col"><i class="bi bi-water"></i> <span text-id="3">Wilgotność</span></th>
+                                    <th scope="col"><i class="bi bi-speedometer"></i> <span text-id="4">Ciśnienie</span></th>
+                                    <th scope="col"><i class="bi bi-droplet-fill"></i> <span text-id="5">Punkt rosy</span></th>
+                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 1.0</span></th>
+                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 2.5</span></th>
+                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 10</span></th>
+                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>AQI</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="archive-readings-chart-tab">
+                    <div class="ms-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-temperature" checked>
+                            <label class="form-check-label" for="chart-temperature">
+                                <span text-id="2">Temperatura</span>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-humidity">
+                            <label class="form-check-label" for="chart-humidity">
+                                <span text-id="3">Wilgotność</span>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-pressure">
+                            <label class="form-check-label" for="chart-pressure">
+                                <span text-id="4">Ciśnienie</span>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-dewpoint">
+                            <label class="form-check-label" for="chart-dewpoint">
+                                <span text-id="5">Punkt rosy</span>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-pm1-0">
+                            <label class="form-check-label" for="chart-pm1-0">
+                                PM 1.0
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-pm2-5">
+                            <label class="form-check-label" for="chart-pm2-5">
+                                PM 2.5
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-pm10">
+                            <label class="form-check-label" for="chart-pm10">
+                                PM 10
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="" id="chart-aqi">
+                            <label class="form-check-label" for="chart-aqi">
+                                AQI
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <canvas id="archive-readings-chart"></canvas>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="archive-readings-download-tab">...</div>
             </div>
 
             <div class="d-flex justify-content-center my-3" id="archive-readings-loading">
@@ -200,26 +293,6 @@
                 </div>
             </div>
             
-            <div class="table-responsive d-none mt-2" id="archive-readings-table-div">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col"><i class="bi bi-calendar"></i> <span text-id="22">Data</span></th>
-                            <th scope="col"><i class="bi bi-thermometer-high"></i> <span text-id="2">Temperatura</span></th>
-                            <th scope="col"><i class="bi bi-water"></i> <span text-id="3">Wilgotność</span></th>
-                            <th scope="col"><i class="bi bi-speedometer"></i> <span text-id="4">Ciśnienie</span></th>
-                            <th scope="col"><i class="bi bi-droplet-fill"></i> <span text-id="5">Punkt rosy</span></th>
-                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 1.0</span></th>
-                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 2.5</span></th>
-                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 10</span></th>
-                            <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>AQI</span></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-
             <div class="alert alert-danger d-flex m-0 d-none mt-2" id="archive-readings-error">
                 <div class="fs-1">
                     <i class="bi bi-x-circle"></i>
@@ -416,6 +489,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js" integrity="sha384-GP2+CwBlakZSDJUr+E4JvbxpM75i1i8+RKkieQxzuyDZLG+5105E1OfHIjzcXyWH" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="/static/js/index.js"></script>
 

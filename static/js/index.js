@@ -2,6 +2,7 @@ const pmUnit = `<div class="frac">
 <span>μg</span>
 <span class="frac-denominator">m³</span>
 </div>`;
+var chart;
 
 function getRandomVideo() {
     const min = 1;
@@ -80,6 +81,7 @@ function loadCurrentReadings() {
 function loadArchiveReadings() {
     document.querySelector("#archive-readings-loading").classList.remove("d-none");
     document.querySelector("#archive-readings-table-div").classList.add("d-none");
+    document.querySelector("#archive-readings-chart").classList.add("d-none");
     document.querySelector("#archive-readings-error").classList.add("d-none");
 
     fetch("/api/archive_readings?" + new URLSearchParams({
@@ -89,18 +91,39 @@ function loadArchiveReadings() {
         if (json.status === "ok") {
             var tbody = document.querySelector("#archive-readings-table-div").querySelector("tbody");
 
+            var temperature = document.querySelector("#chart-temperature").checked;
+            var humidity = document.querySelector("#chart-humidity").checked;
+            var pressure = document.querySelector("#chart-pressure").checked;
+            var dewpoint = document.querySelector("#chart-dewpoint").checked;
+            var pm1_0 = document.querySelector("#chart-pm1-0").checked;
+            var pm2_5 = document.querySelector("#chart-pm2-5").checked;
+            var pm10 = document.querySelector("#chart-pm10").checked;
+            var aqi = document.querySelector("#chart-aqi").checked;
+
+            var labels = [];
+            var temperature_data = [];
+            var humidity_data = [];
+            var pressure_data = [];
+            var dewpoint_data = [];
+            var pm1_0_data = [];
+            var pm2_5_data = [];
+            var pm10_data = [];
+            var aqi_data = [];
+
             tbody.innerHTML = "";
 
             json.readings.forEach((reading) => {
-                var row = document.createElement("tr");
-                row.innerHTML = `
-                <th scope="row">${new Date(reading.date).toLocaleString(undefined, {
+                var date = new Date(reading.date).toLocaleString(undefined, {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
                     hour: "numeric",
                     minute: "numeric"
-                  })}</th>
+                  })
+
+                var row = document.createElement("tr");
+                row.innerHTML = `
+                <th scope="row">${date}</th>
                 <td>${reading.temperature !== null ? reading.temperature.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
                 <td>${reading.humidity !== null ? reading.humidity + "%" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
                 <td>${reading.pressure !== null ? reading.pressure + " hPa" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
@@ -111,9 +134,101 @@ function loadArchiveReadings() {
                 <td>${reading.aqi !== null ? reading.aqi : '<i class="bi bi-x-circle text-danger"></i>'}</td>
                 `;
                 tbody.append(row);
-            })
+
+                labels.push(date);
+                
+                if (temperature) {
+                    temperature_data.push(reading.temperature);
+                }
+                if (humidity) {
+                    humidity_data.push(reading.humidity);
+                }
+                if (pressure) {
+                    pressure_data.push(reading.pressure);
+                }
+                if (dewpoint) {
+                    dewpoint_data.push(reading.dewpoint);
+                }
+                if (pm1_0) {
+                    pm1_0_data.push(reading["pm1.0"]);
+                }
+                if (pm2_5) {
+                    pm2_5_data.push(reading["pm2.5"]);
+                }
+                if (pm10) {
+                    pm10_data.push(reading["pm10"]);
+                }
+                if (aqi) {
+                    aqi_data.push(reading.aqi);
+                }
+            });
+
+            var ctx = document.querySelector('#archive-readings-chart');
+
+            try { chart.destroy(); } catch {}
+
+            var datasets = [];
+
+            if (temperature) {
+                datasets.push({
+                    label: window.navigator.language.split("-")[0] == "pl" ? "Temperatura" : "Temperature",
+                    data: temperature_data,
+                });
+            }
+            if (humidity) {
+                datasets.push({
+                    label: window.navigator.language.split("-")[0] == "pl" ? "Wilgotność" : "Humidity",
+                    data: humidity_data,
+                });
+            }
+            if (pressure) {
+                datasets.push({
+                    label: window.navigator.language.split("-")[0] == "pl" ? "Ciśnienie" : "Pressure",
+                    data: pressure_data,
+                });
+            }
+            if (dewpoint) {
+                datasets.push({
+                    label: window.navigator.language.split("-")[0] == "pl" ? "Punkt rosy" : "Dewpoint",
+                    data: dewpoint_data,
+                });
+            }
+            if (pm1_0) {
+                datasets.push({
+                    label: "PM 1.0",
+                    data: pm1_0_data,
+                });
+            }
+            if (pm2_5) {
+                datasets.push({
+                    label: "PM 2.5",
+                    data: pm2_5_data,
+                });
+            }
+            if (pm10) {
+                datasets.push({
+                    label: "PM 10",
+                    data: pm10_data,
+                });
+            }
+            if (aqi) {
+                datasets.push({
+                    label: "AQI",
+                    data: aqi_data,
+                });
+            }
+
+            chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: datasets,
+                },
+                options: { }
+            });
 
             document.querySelector("#archive-readings-table-div").classList.remove("d-none");
+            document.querySelector("#archive-readings-chart").classList.remove("d-none");
             document.querySelector("#archive-readings-loading").classList.add("d-none");
         } else if (json.status === "error") {
             document.querySelector("#archive-readings-loading").classList.add("d-none");
@@ -357,7 +472,19 @@ document.querySelectorAll(".copy-api").forEach((e) => {
 document.querySelector("#archive-readings-start-date").valueAsDate = new Date();
 document.querySelector("#archive-readings-end-date").valueAsDate = new Date();
 
-document.querySelector("#archive-readings-start-date").addEventListener("change", loadArchiveReadings);
-document.querySelector("#archive-readings-end-date").addEventListener("change", loadArchiveReadings);
+[
+    "#archive-readings-start-date",
+    "#archive-readings-end-date",
+    "#chart-temperature",
+    "#chart-humidity",
+    "#chart-pressure",
+    "#chart-dewpoint",
+    "#chart-pm1-0",
+    "#chart-pm2-5",
+    "#chart-pm10",
+    "#chart-aqi"
+].forEach((e) => {
+    document.querySelector(e).addEventListener("change", loadArchiveReadings);
+});
 
 loadArchiveReadings();

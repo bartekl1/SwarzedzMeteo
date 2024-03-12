@@ -22,6 +22,9 @@ const textTranslations = [
     "A DS18B20 sensor was used to measure temperature, a BME280 sensor for humidity and pressure, and PMS5003 sensor for air quality.",
     "Documentation",
     "Date",
+    "Table",
+    "Chart",
+    "Download",
 ];
 
 const titleTranslations = {};
