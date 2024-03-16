@@ -86,3 +86,11 @@
 #archive-readings-end-date {
     max-width: 150px;
 }
+
+.selected-column {
+    background-color: var(--bs-light-bg-subtle) !important;
+}
+
+#archive-readings-table-div th[scope=col] {
+    cursor: pointer;
+}

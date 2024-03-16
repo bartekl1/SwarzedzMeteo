@@ -212,15 +212,60 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col"><i class="bi bi-calendar"></i> <span text-id="22">Data</span></th>
-                                    <th scope="col"><i class="bi bi-thermometer-high"></i> <span text-id="2">Temperatura</span></th>
-                                    <th scope="col"><i class="bi bi-water"></i> <span text-id="3">Wilgotność</span></th>
-                                    <th scope="col"><i class="bi bi-speedometer"></i> <span text-id="4">Ciśnienie</span></th>
-                                    <th scope="col"><i class="bi bi-droplet-fill"></i> <span text-id="5">Punkt rosy</span></th>
-                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 1.0</span></th>
-                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 2.5</span></th>
-                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>PM 10</span></th>
-                                    <th scope="col"><i class="bi bi-cloud-haze2"></i> <span>AQI</span></th>
+                                    <th scope="col" id="date-column" class="selected-column sort-ascending">
+                                        <i class="bi bi-calendar"></i>
+                                        <span text-id="22">Data</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="temperature-column">
+                                        <i class="bi bi-thermometer-high"></i>
+                                        <span text-id="2">Temperatura</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="humidity-column">
+                                        <i class="bi bi-water"></i>
+                                        <span text-id="3">Wilgotność</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="pressure-column">
+                                        <i class="bi bi-speedometer"></i>
+                                        <span text-id="4">Ciśnienie</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="dewpoint-column">
+                                        <i class="bi bi-droplet-fill"></i>
+                                        <span text-id="5">Punkt rosy</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="pm1-0-column">
+                                        <i class="bi bi-cloud-haze2"></i>
+                                        <span>PM 1.0</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="pm2-5-column">
+                                        <i class="bi bi-cloud-haze2"></i>
+                                        <span>PM 2.5</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="pm10-column">
+                                        <i class="bi bi-cloud-haze2"></i>
+                                        <span>PM 10</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
+                                    <th scope="col" id="aqi-column">
+                                        <i class="bi bi-cloud-haze2"></i>
+                                        <span>AQI</span>
+                                        <i class="bi bi-caret-up-fill sort-ascending-icon ms-1 d-none"></i>
+                                        <i class="bi bi-caret-down-fill sort-descending-icon ms-1 d-none"></i>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>

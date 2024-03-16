@@ -89,6 +89,9 @@ function loadArchiveReadings() {
         end_date: document.querySelector("#archive-readings-end-date").value,
     })).then((res) => { return res.json() }).then((json) => {
         if (json.status === "ok") {
+            var sortBy = document.querySelector("#archive-readings-table-div .selected-column").id;
+            var sortDescending = document.querySelector("#archive-readings-table-div .selected-column").classList.contains("sort-descending");
+
             var tbody = document.querySelector("#archive-readings-table-div").querySelector("tbody");
 
             var temperature = document.querySelector("#chart-temperature").checked;
@@ -100,7 +103,7 @@ function loadArchiveReadings() {
             var pm10 = document.querySelector("#chart-pm10").checked;
             var aqi = document.querySelector("#chart-aqi").checked;
 
-            var labels = [];
+            var dates = [];
             var temperature_data = [];
             var humidity_data = [];
             var pressure_data = [];
@@ -110,32 +113,83 @@ function loadArchiveReadings() {
             var pm10_data = [];
             var aqi_data = [];
 
-            tbody.innerHTML = "";
+            var data = {};
 
-            json.readings.forEach((reading) => {
+            json.readings.forEach((reading, i) => {
                 var date = new Date(reading.date).toLocaleString(undefined, {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
                     hour: "numeric",
                     minute: "numeric"
-                  })
+                });
 
-                var row = document.createElement("tr");
-                row.innerHTML = `
-                <th scope="row">${date}</th>
-                <td>${reading.temperature !== null ? reading.temperature.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading.humidity !== null ? reading.humidity + "%" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading.pressure !== null ? reading.pressure + " hPa" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading.dewpoint !== null ? reading.dewpoint.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading["pm1.0"] !== null ? reading["pm1.0"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading["pm2.5"] !== null ? reading["pm2.5"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading["pm10"] !== null ? reading["pm10"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                <td>${reading.aqi !== null ? reading.aqi : '<i class="bi bi-x-circle text-danger"></i>'}</td>
-                `;
-                tbody.append(row);
+                switch (sortBy) {
+                    case "date-column":
+                        data[i] = [reading];
+                        break;
 
-                labels.push(date);
+                    case "temperature-column":
+                        if (!(reading.temperature * 10 in data)) {
+                            data[reading.temperature * 10] = [];
+                        }
+                        data[reading.temperature * 10].push(reading);
+                        break;
+
+                    case "humidity-column":
+                        if (!(reading.humidity in data)) {
+                            data[reading.humidity] = [];
+                        }
+                        data[reading.humidity].push(reading);
+                        break;
+
+                    case "pressure-column":
+                        if (!(reading.pressure in data)) {
+                            data[reading.pressure] = [];
+                        }
+                        data[reading.pressure].push(reading);
+                        break;
+
+                    case "dewpoint-column":
+                        if (!(reading.dewpoint * 10 in data)) {
+                            data[reading.dewpoint * 10] = [];
+                        }
+                        data[reading.dewpoint * 10].push(reading);
+                        break;
+
+                    case "pm1-0-column":
+                        if (!(reading["pm1.0"] in data)) {
+                            data[reading["pm1.0"]] = [];
+                        }
+                        data[reading["pm1.0"]].push(reading);
+                        break;
+
+                    case "pm2-5-column":
+                        if (!(reading["pm2.5"] in data)) {
+                            data[reading["pm2.5"]] = [];
+                        }
+                        data[reading["pm2.5"]].push(reading);
+                        break;
+
+                    case "pm10-column":
+                        if (!(reading["pm10"] in data)) {
+                            data[reading["pm10"]] = [];
+                        }
+                        data[reading["pm10"]].push(reading);
+                        break;
+
+                    case "aqi-column":
+                        if (!(reading.aqi in data)) {
+                            data[reading.aqi] = [];
+                        }
+                        data[reading.aqi].push(reading);
+                        break;
+                
+                    default:
+                        break;
+                }
+
+                dates.push(date);
                 
                 if (temperature) {
                     temperature_data.push(reading.temperature);
@@ -161,6 +215,39 @@ function loadArchiveReadings() {
                 if (aqi) {
                     aqi_data.push(reading.aqi);
                 }
+            });
+
+            tbody.innerHTML = "";
+
+            Object.values(data).forEach((e1) => {
+                e1.forEach((e2) => {
+                    var date = new Date(e2.date).toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric"
+                    });
+
+                    var row = document.createElement("tr");
+                    row.innerHTML = `
+                    <th scope="row">${date}</th>
+                    <td>${e2.temperature !== null ? e2.temperature.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2.humidity !== null ? e2.humidity + "%" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2.pressure !== null ? e2.pressure + " hPa" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2.dewpoint !== null ? e2.dewpoint.toFixed(1) + "°C" : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2["pm1.0"] !== null ? e2["pm1.0"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2["pm2.5"] !== null ? e2["pm2.5"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2["pm10"] !== null ? e2["pm10"] + " " + pmUnit : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    <td>${e2.aqi !== null ? e2.aqi : '<i class="bi bi-x-circle text-danger"></i>'}</td>
+                    `;
+
+                    if (!sortDescending) {
+                        tbody.append(row);
+                    } else {
+                        tbody.insertBefore(row, tbody.firstChild);
+                    }
+                });
             });
 
             var ctx = document.querySelector('#archive-readings-chart');
@@ -221,7 +308,7 @@ function loadArchiveReadings() {
             chart = new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: labels,
+                    labels: dates,
                     datasets: datasets,
                 },
                 options: { }
@@ -235,10 +322,10 @@ function loadArchiveReadings() {
             document.querySelector("#archive-readings-error").classList.remove("d-none");
         }
     })
-    // .catch((err) => {
-    //     document.querySelector("#archive-readings-loading").classList.add("d-none");
-    //     document.querySelector("#archive-readings-error").classList.remove("d-none");
-    // });
+    .catch((err) => {
+        document.querySelector("#archive-readings-loading").classList.add("d-none");
+        document.querySelector("#archive-readings-error").classList.remove("d-none");
+    });
 }
 
 function loadAnnouncements() {
@@ -488,3 +575,28 @@ document.querySelector("#archive-readings-end-date").valueAsDate = new Date();
 });
 
 loadArchiveReadings();
+
+document.querySelector("#archive-readings-table-div").querySelectorAll("th[scope=col]").forEach((e) => {
+    e.addEventListener("click", (evt) => {
+        if (evt.currentTarget.classList.contains("selected-column")) {
+            if (evt.currentTarget.classList.contains("sort-ascending")) {
+                evt.currentTarget.classList.replace("sort-ascending", "sort-descending");
+                evt.currentTarget.querySelector(".sort-ascending-icon").classList.add("d-none");
+                evt.currentTarget.querySelector(".sort-descending-icon").classList.remove("d-none");
+            } else {
+                evt.currentTarget.classList.replace("sort-descending", "sort-ascending");
+                evt.currentTarget.querySelector(".sort-ascending-icon").classList.remove("d-none");
+                evt.currentTarget.querySelector(".sort-descending-icon").classList.add("d-none");
+            }
+        } else {
+            document.querySelector("#archive-readings-table-div").querySelector("th.selected-column").querySelector(".sort-ascending-icon").classList.add("d-none");
+            document.querySelector("#archive-readings-table-div").querySelector("th.selected-column").querySelector(".sort-descending-icon").classList.add("d-none");
+            document.querySelector("#archive-readings-table-div").querySelector("th.selected-column").classList.remove("selected-column", "sort-ascending", "sort-descending");
+        
+            evt.currentTarget.classList.add("selected-column", "sort-ascending");
+            evt.currentTarget.querySelector(".sort-ascending-icon").classList.remove("d-none");
+        }
+
+        loadArchiveReadings();
+    });
+});
