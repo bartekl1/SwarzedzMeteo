@@ -41,9 +41,11 @@ def get_archive_readings(request):
         start_date_dt = None
         end_date_dt = None
 
+    all = request.args.get('all') == 'true'
+
     status = 200
 
-    if start_date is None or end_date is None:
+    if (start_date is None or end_date is None) and not all:
         status = 400
         rd = {
             'status': 'error',
@@ -52,11 +54,14 @@ def get_archive_readings(request):
 
     if status == 200:
         try:
-            r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
-                            params={
-                                'startDate': start_date_dt.isoformat(),
-                                'endDate': end_date_dt.isoformat()
-                            })
+            if not all:
+                r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
+                                params={
+                                    'startDate': start_date_dt.isoformat(),
+                                    'endDate': end_date_dt.isoformat()
+                                })
+            else:
+                r = requests.get(f'{configs["remote_url"]}/api/archive_readings')
         except Exception:
             rd = {
                 'status': 'error',
@@ -139,7 +144,7 @@ def get_archive_readings(request):
         readings2 = []
 
         for key, value in readings.items():
-            if datetime.datetime.fromisoformat(start_date).date() <= \
+            if all or datetime.datetime.fromisoformat(start_date).date() <= \
                 datetime.datetime.fromisoformat(key).date() <= \
                 datetime.datetime.fromisoformat(end_date).date():
                 readings2.append(value)
