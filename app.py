@@ -5,6 +5,7 @@ import cachetools.func
 import datetime
 import json
 import os
+import io
 
 with open('configs.json') as file:
     configs = json.load(file)
@@ -12,6 +13,152 @@ with open('configs.json') as file:
 ttl = configs['ttl'] if 'ttl' in configs.keys() else 0
 
 app = Flask(__name__)
+
+
+def get_archive_readings(request):
+    try:
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+
+        start_date_dt = datetime.datetime.fromisoformat(start_date)
+        end_date_dt = datetime.datetime.fromisoformat(end_date)
+
+        start_date_dt = datetime.datetime(year=start_date_dt.year,
+                                            month=start_date_dt.month,
+                                            day=start_date_dt.day,
+                                            hour=0,
+                                            minute=0)
+        end_date_dt = datetime.datetime(year=end_date_dt.year,
+                                        month=end_date_dt.month,
+                                        day=end_date_dt.day,
+                                        hour=23,
+                                        minute=59)
+        end_date_dt += datetime.timedelta(days=1)
+    except Exception:
+        start_date = None
+        end_date = None
+
+        start_date_dt = None
+        end_date_dt = None
+
+    status = 200
+
+    if start_date is None or end_date is None:
+        status = 400
+        rd = {
+            'status': 'error',
+            'error': 'start_date_and_end_date_required'
+        }
+
+    if status == 200:
+        try:
+            r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
+                            params={
+                                'startDate': start_date_dt.isoformat(),
+                                'endDate': end_date_dt.isoformat()
+                            })
+        except Exception:
+            rd = {
+                'status': 'error',
+                'error': 'internal_error'
+            }
+            status = 500
+
+    if status == 200:
+        if r.status_code == 200:
+            rj = r.json()
+        else:
+            rd = {
+                'status': 'error',
+                'error': 'internal_error'
+            }
+            status = 500
+
+    if status == 200:
+        readings = {}
+
+        for r in rj:
+            dt = datetime.datetime.fromisoformat(r['read_time'])
+            dt = datetime.datetime.utcfromtimestamp(dt.timestamp())
+            dt = datetime.datetime(year=dt.year,
+                                   month=dt.month,
+                                   day=dt.day,
+                                   hour=dt.hour)
+            dt_iso = dt.isoformat()
+
+            if dt_iso not in readings.keys():
+                readings[dt_iso] = {
+                    'temperature': [],
+                    'humidity': [],
+                    'pressure': [],
+                    'pm1.0': [],
+                    'pm2.5': [],
+                    'pm10': []
+                }
+
+            if r['ds18b20_temperature'] is not None:
+                readings[dt_iso]['temperature'].append(r['ds18b20_temperature'])
+            if r['bme280_humidity'] is not None:
+                readings[dt_iso]['humidity'].append(r['bme280_humidity'])
+            if r['bme280_pressure'] is not None:
+                readings[dt_iso]['pressure'].append(r['bme280_pressure'])
+            if r['pms5003_pm_1_0'] is not None:
+                readings[dt_iso]['pm1.0'].append(r['pms5003_pm_1_0'])
+            if r['pms5003_pm_2_5'] is not None:
+                readings[dt_iso]['pm2.5'].append(r['pms5003_pm_2_5'])
+            if r['pms5003_pm_10'] is not None:
+                readings[dt_iso]['pm10'].append(r['pms5003_pm_10'])
+
+        for date in readings.keys():
+            for key in ['temperature', 'humidity', 'pressure', 'pm1.0', 'pm2.5', 'pm10']:
+                if len(readings[date][key]) != 0:
+                    readings[date][key] = sum(readings[date][key]) / len(readings[date][key])
+                else:
+                    readings[date][key] = None
+
+        for date in readings.keys():
+            if readings[date]['humidity'] is not None and readings[date]['temperature'] is not None:
+                readings[date]['dewpoint'] = ((readings[date]['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * readings[date]['temperature'])) + (0.1 * readings[date]['temperature']) - 112
+            else:
+                readings[date]['dewpoint'] = None
+            if readings[date]['pm10'] is not None and readings[date]['pm2.5'] is not None:
+                readings[date]['aqi'] = ((readings[date]['pm10'] / 1.8) + (readings[date]['pm2.5'] / 1.1)) / 2
+            else:
+                readings[date]['aqi'] = None
+
+        for date in readings.keys():
+            readings[date]['temperature'] = round(readings[date]['temperature'], 1) if readings[date]['temperature'] is not None else None
+            readings[date]['humidity'] = round(readings[date]['humidity']) if readings[date]['humidity'] is not None else None
+            readings[date]['pressure'] = round(readings[date]['pressure']) if readings[date]['pressure'] is not None else None
+            readings[date]['dewpoint'] = round(readings[date]['dewpoint'], 1) if readings[date]['dewpoint'] is not None else None
+            readings[date]['pm1.0'] = round(readings[date]['pm1.0']) if readings[date]['pm1.0'] is not None else None
+            readings[date]['pm2.5'] = round(readings[date]['pm2.5']) if readings[date]['pm2.5'] is not None else None
+            readings[date]['pm10'] = round(readings[date]['pm10']) if readings[date]['pm10'] is not None else None
+            readings[date]['aqi'] = round(readings[date]['aqi']) if readings[date]['aqi'] is not None else None
+
+        readings2 = []
+
+        for key, value in readings.items():
+            if datetime.datetime.fromisoformat(start_date).date() <= \
+                datetime.datetime.fromisoformat(key).date() <= \
+                datetime.datetime.fromisoformat(end_date).date():
+                readings2.append(value)
+                readings2[-1]['date'] = key
+
+    if status == 200:
+        rd = {
+            'status': 'ok',
+            'readings': readings2
+        }
+
+    res = Response(
+        json.dumps(rd, indent=4),
+        status=status,
+        mimetype='application/json'
+    )
+
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    return res
 
 
 @app.route('/')
@@ -163,149 +310,34 @@ def current_readings():
 
 @app.route('/api/archive_readings')
 def archive_readings():
-    try:
-        start_date = request.args.get("start_date")
-        end_date = request.args.get("end_date")
+    return get_archive_readings(request)
 
-        start_date_dt = datetime.datetime.fromisoformat(start_date)
-        end_date_dt = datetime.datetime.fromisoformat(end_date)
 
-        start_date_dt = datetime.datetime(year=start_date_dt.year,
-                                            month=start_date_dt.month,
-                                            day=start_date_dt.day,
-                                            hour=0,
-                                            minute=0)
-        end_date_dt = datetime.datetime(year=end_date_dt.year,
-                                        month=end_date_dt.month,
-                                        day=end_date_dt.day,
-                                        hour=23,
-                                        minute=59)
-        end_date_dt += datetime.timedelta(days=1)
-    except Exception:
-        start_date = None
-        end_date = None
+@app.route('/api/archive_readings/download/json')
+def archive_readings_json():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
 
-        start_date_dt = None
-        end_date_dt = None
+    if rs == 200:
+        indent = 4 if request.args.get('indent') == 'true' else None
+        readings = rj['readings']
+        file = io.StringIO()
+        json.dump(readings, file, indent=indent)
 
-    status = 200
+        file_bytes = io.BytesIO()
+        file_bytes.write(file.getvalue().encode())
+        file_bytes.seek(0)
+        file.close()
 
-    if start_date is None or end_date is None:
-        status = 400
-        rd = {
-            'status': 'error',
-            'error': 'start_date_and_end_date_required'
-        }
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='test.json',
+            mimetype='application/json'
+        )
 
-    if status == 200:
-        try:
-            r = requests.get(f'{configs["remote_url"]}/api/archive_readings',
-                            params={
-                                'startDate': start_date_dt.isoformat(),
-                                'endDate': end_date_dt.isoformat()
-                            })
-        except Exception:
-            rd = {
-                'status': 'error',
-                'error': 'internal_error'
-            }
-            status = 500
-
-    if status == 200:
-        if r.status_code == 200:
-            rj = r.json()
-        else:
-            rd = {
-                'status': 'error',
-                'error': 'internal_error'
-            }
-            status = 500
-
-    if status == 200:
-        readings = {}
-
-        for r in rj:
-            dt = datetime.datetime.fromisoformat(r['read_time'])
-            dt = datetime.datetime.utcfromtimestamp(dt.timestamp())
-            dt = datetime.datetime(year=dt.year,
-                                   month=dt.month,
-                                   day=dt.day,
-                                   hour=dt.hour)
-            dt_iso = dt.isoformat()
-
-            if dt_iso not in readings.keys():
-                readings[dt_iso] = {
-                    'temperature': [],
-                    'humidity': [],
-                    'pressure': [],
-                    'pm1.0': [],
-                    'pm2.5': [],
-                    'pm10': []
-                }
-
-            if r['ds18b20_temperature'] is not None:
-                readings[dt_iso]['temperature'].append(r['ds18b20_temperature'])
-            if r['bme280_humidity'] is not None:
-                readings[dt_iso]['humidity'].append(r['bme280_humidity'])
-            if r['bme280_pressure'] is not None:
-                readings[dt_iso]['pressure'].append(r['bme280_pressure'])
-            if r['pms5003_pm_1_0'] is not None:
-                readings[dt_iso]['pm1.0'].append(r['pms5003_pm_1_0'])
-            if r['pms5003_pm_2_5'] is not None:
-                readings[dt_iso]['pm2.5'].append(r['pms5003_pm_2_5'])
-            if r['pms5003_pm_10'] is not None:
-                readings[dt_iso]['pm10'].append(r['pms5003_pm_10'])
-
-        for date in readings.keys():
-            for key in ['temperature', 'humidity', 'pressure', 'pm1.0', 'pm2.5', 'pm10']:
-                if len(readings[date][key]) != 0:
-                    readings[date][key] = sum(readings[date][key]) / len(readings[date][key])
-                else:
-                    readings[date][key] = None
-
-        for date in readings.keys():
-            if readings[date]['humidity'] is not None and readings[date]['temperature'] is not None:
-                readings[date]['dewpoint'] = ((readings[date]['humidity'] / 100) ** (1 / 8)) * (112 + (0.9 * readings[date]['temperature'])) + (0.1 * readings[date]['temperature']) - 112
-            else:
-                readings[date]['dewpoint'] = None
-            if readings[date]['pm10'] is not None and readings[date]['pm2.5'] is not None:
-                readings[date]['aqi'] = ((readings[date]['pm10'] / 1.8) + (readings[date]['pm2.5'] / 1.1)) / 2
-            else:
-                readings[date]['aqi'] = None
-
-        for date in readings.keys():
-            readings[date]['temperature'] = round(readings[date]['temperature'], 1) if readings[date]['temperature'] is not None else None
-            readings[date]['humidity'] = round(readings[date]['humidity']) if readings[date]['humidity'] is not None else None
-            readings[date]['pressure'] = round(readings[date]['pressure']) if readings[date]['pressure'] is not None else None
-            readings[date]['dewpoint'] = round(readings[date]['dewpoint'], 1) if readings[date]['dewpoint'] is not None else None
-            readings[date]['pm1.0'] = round(readings[date]['pm1.0']) if readings[date]['pm1.0'] is not None else None
-            readings[date]['pm2.5'] = round(readings[date]['pm2.5']) if readings[date]['pm2.5'] is not None else None
-            readings[date]['pm10'] = round(readings[date]['pm10']) if readings[date]['pm10'] is not None else None
-            readings[date]['aqi'] = round(readings[date]['aqi']) if readings[date]['aqi'] is not None else None
-
-        readings2 = []
-
-        for key, value in readings.items():
-            if datetime.datetime.fromisoformat(start_date).date() <= \
-                datetime.datetime.fromisoformat(key).date() <= \
-                datetime.datetime.fromisoformat(end_date).date():
-                readings2.append(value)
-                readings2[-1]['date'] = key
-
-    if status == 200:
-        rd = {
-            'status': 'ok',
-            'readings': readings2
-        }
-
-    res = Response(
-        json.dumps(rd, indent=4),
-        status=status,
-        mimetype='application/json'
-    )
-
-    res.headers['Access-Control-Allow-Origin'] = '*'
-    return res
+    return "Error", 400
 
 
 @app.route('/api/announcements')
