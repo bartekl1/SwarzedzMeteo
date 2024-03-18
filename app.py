@@ -4,6 +4,7 @@ import cachetools.func
 
 import datetime
 import json
+import csv
 import os
 import io
 
@@ -338,8 +339,40 @@ def archive_readings_json():
         return send_file(
             file_bytes,
             as_attachment=True,
-            download_name='test.json',
+            download_name='readings.json',
             mimetype='application/json'
+        )
+
+    return "Error", 400
+
+
+@app.route('/api/archive_readings/download/csv')
+def archive_readings_csv():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
+
+    field_names = ["date", "temperature", "humidity", "pressure", "dewpoint",
+                   "pm1.0", "pm2.5", "pm10", "aqi"]
+
+    if rs == 200:
+        readings = rj['readings']
+        file = io.StringIO()
+
+        writer = csv.DictWriter(file, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(readings)
+
+        file_bytes = io.BytesIO()
+        file_bytes.write(file.getvalue().encode())
+        file_bytes.seek(0)
+        file.close()
+
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='readings.csv',
+            mimetype='text/csv'
         )
 
     return "Error", 400
