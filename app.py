@@ -378,6 +378,95 @@ def archive_readings_csv():
     return "Error", 400
 
 
+@app.route('/api/archive_readings/download/sql')
+def archive_readings_sql():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
+
+    if rs == 200:
+        readings = rj['readings']
+        readings_count = len(readings)
+        file = io.StringIO()
+
+        file.write('''SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+
+CREATE TABLE `readings` (
+  `id` int,
+  `date` datetime,
+  `temperature` float,
+  `humidity` int,
+  `pressure` int,
+  `dewpoint` float,
+  `pm1_0` int,
+  `pm2_5` int,
+  `pm10` int,
+  `aqi` int
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE `readings`
+  ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `readings`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+
+INSERT INTO `readings` (`date`, `temperature`, `humidity`, `pressure`, `dewpoint`, `pm1_0`, `pm2_5`, `pm10`, `aqi`) VALUES
+''')
+
+        for i, reading in enumerate(readings):
+            date = datetime.datetime.fromisoformat(reading['date']).strftime("%Y-%m-%d %H:%M:%S")
+            temperature = str(reading['temperature']) if reading['temperature'] is not None else 'NULL'
+            humidity = str(reading['humidity']) if reading['humidity'] is not None else 'NULL'
+            pressure = str(reading['pressure']) if reading['pressure'] is not None else 'NULL'
+            dewpoint = str(reading['dewpoint']) if reading['dewpoint'] is not None else 'NULL'
+            pm1_0 = str(reading['pm1.0']) if reading['pm1.0'] is not None else 'NULL'
+            pm2_5 = str(reading['pm2.5']) if reading['pm2.5'] is not None else 'NULL'
+            pm10 = str(reading['pm10']) if reading['pm10'] is not None else 'NULL'
+            aqi = str(reading['aqi']) if reading['aqi'] is not None else 'NULL'
+
+            file.write(f"('{date}', {temperature}, {humidity}, {pressure}, {dewpoint}, {pm1_0}, {pm2_5}, {pm10}, {aqi})")
+
+            if i + 1 == readings_count:
+                file.write(';')
+            else:
+                file.write(',\n')
+
+        file.write('''
+
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+''')
+
+        file_bytes = io.BytesIO()
+        file_bytes.write(file.getvalue().encode())
+        file_bytes.seek(0)
+        file.close()
+
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='readings.sql',
+            mimetype='text/plain'
+        )
+
+    return "Error", 400
+
+
 @app.route('/api/announcements')
 def announcements():
     if os.path.isfile('announcements.json'):
