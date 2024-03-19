@@ -4,6 +4,8 @@ const pmUnit = `<div class="frac">
 </div>`;
 var chart;
 
+var controller;
+
 function getRandomVideo() {
     const min = 1;
     const max = 17;
@@ -84,10 +86,17 @@ function loadArchiveReadings() {
     document.querySelector("#archive-readings-chart").classList.add("d-none");
     document.querySelector("#archive-readings-error").classList.add("d-none");
 
+    try {
+        controller.abort();
+    } catch { }
+
+    controller = new AbortController();
+    var signal = controller.signal;
+
     fetch("/api/archive_readings?" + new URLSearchParams({
         start_date: document.querySelector("#archive-readings-start-date").value,
         end_date: document.querySelector("#archive-readings-end-date").value,
-    })).then((res) => { return res.json() }).then((json) => {
+    }), { signal }).then((res) => { return res.json() }).then((json) => {
         if (json.status === "ok") {
             var sortBy = document.querySelector("#archive-readings-table-div .selected-column").id;
             var sortDescending = document.querySelector("#archive-readings-table-div .selected-column").classList.contains("sort-descending");
@@ -323,8 +332,10 @@ function loadArchiveReadings() {
         }
     })
     .catch((err) => {
-        document.querySelector("#archive-readings-loading").classList.add("d-none");
-        document.querySelector("#archive-readings-error").classList.remove("d-none");
+        if (String(err) !== "AbortError: The user aborted a request.") {
+            document.querySelector("#archive-readings-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-error").classList.remove("d-none");
+        }
     });
 }
 
