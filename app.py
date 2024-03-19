@@ -1,6 +1,7 @@
 from flask import Flask, render_template, send_file, Response, request
 import requests
 import cachetools.func
+import yaml
 
 import datetime
 import json
@@ -462,6 +463,33 @@ INSERT INTO `readings` (`date`, `temperature`, `humidity`, `pressure`, `dewpoint
             as_attachment=True,
             download_name='readings.sql',
             mimetype='text/plain'
+        )
+
+    return "Error", 400
+
+
+@app.route('/api/archive_readings/download/yaml')
+def archive_readings_yaml():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
+
+    if rs == 200:
+        readings = rj['readings']
+        file = io.StringIO()
+
+        yaml.dump(readings, file)
+
+        file_bytes = io.BytesIO()
+        file_bytes.write(file.getvalue().encode())
+        file_bytes.seek(0)
+        file.close()
+
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='readings.yaml',
+            mimetype='text/yaml'
         )
 
     return "Error", 400
