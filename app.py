@@ -2,7 +2,9 @@ from flask import Flask, render_template, send_file, Response, request
 import requests
 import cachetools.func
 import yaml
+import dicttoxml
 
+from xml.dom.minidom import parseString
 import datetime
 import json
 import csv
@@ -327,7 +329,7 @@ def archive_readings_json():
     rj = r.json
 
     if rs == 200:
-        indent = 4 if request.args.get('indent') == 'true' else None
+        indent = 4 if request.args.get('format') == 'true' else None
         readings = rj['readings']
         file = io.StringIO()
         json.dump(readings, file, indent=indent)
@@ -490,6 +492,44 @@ def archive_readings_yaml():
             as_attachment=True,
             download_name='readings.yaml',
             mimetype='text/yaml'
+        )
+
+    return "Error", 400
+
+
+@app.route('/api/archive_readings/download/xml')
+def archive_readings_xml():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
+
+    if rs == 200:
+        readings = rj['readings']
+        file = io.StringIO()
+
+        xml = dicttoxml.dicttoxml(readings,
+                                  custom_root='readings',
+                                  attr_type=False,
+                                  item_func=lambda x: 'reading')
+        
+        if request.args.get('format') == 'true':
+            xml = parseString(xml).toprettyxml()
+            xml = xml.replace('\t', '    ')
+        else:
+            xml = xml.decode()
+
+        file.write(xml)
+
+        file_bytes = io.BytesIO()
+        file_bytes.write(file.getvalue().encode())
+        file_bytes.seek(0)
+        file.close()
+
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='readings.xml',
+            mimetype='text/xml'
         )
 
     return "Error", 400
