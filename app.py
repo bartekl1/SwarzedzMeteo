@@ -1,4 +1,5 @@
 from flask import Flask, render_template, send_file, Response, request
+from openpyxl import Workbook
 import requests
 import cachetools.func
 import yaml
@@ -10,6 +11,7 @@ import json
 import csv
 import os
 import io
+import string
 
 with open('configs.json') as file:
     configs = json.load(file)
@@ -511,7 +513,7 @@ def archive_readings_xml():
                                   custom_root='readings',
                                   attr_type=False,
                                   item_func=lambda x: 'reading')
-        
+
         if request.args.get('format') == 'true':
             xml = parseString(xml).toprettyxml()
             xml = xml.replace('\t', '    ')
@@ -530,6 +532,54 @@ def archive_readings_xml():
             as_attachment=True,
             download_name='readings.xml',
             mimetype='text/xml'
+        )
+
+    return "Error", 400
+
+
+@app.route('/api/archive_readings/download/excel')
+def archive_readings_excel():
+    r = get_archive_readings(request)
+    rs = r.status_code
+    rj = r.json
+
+    names = {"date": "Date",
+             "temperature": "Temperature",
+             "humidity": "Humidity",
+             "pressure": "Pressure",
+             "dewpoint": "Dewpoint",
+             "pm1.0": "PM 1.0",
+             "pm2.5": "PM 2.5",
+             "pm10": "PM 10",
+             "aqi": "AQI"}
+
+    if rs == 200:
+        readings = rj['readings']
+
+        wb = Workbook()
+        ws = wb.active
+
+        ws.title = "Readings"
+
+        for i, name in enumerate(names.values()):
+            ws[string.ascii_uppercase[i] + '1'] = name
+
+        for i, reading in enumerate(readings):
+            for j, name in enumerate(names.keys()):
+                ws[string.ascii_uppercase[j] + str(i + 2)] = reading[name]
+
+        file_bytes = io.BytesIO()
+
+        wb.save(file_bytes)
+
+        file_bytes.seek(0)
+        file.close()
+
+        return send_file(
+            file_bytes,
+            as_attachment=True,
+            download_name='readings.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
 
     return "Error", 400

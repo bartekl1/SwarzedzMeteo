@@ -3,3 +3,4 @@ requests
 cachetools
 PyYAML
 dicttoxml
+openpyxl
