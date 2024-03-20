@@ -25,6 +25,9 @@ const textTranslations = [
     "Table",
     "Chart",
     "Download",
+    "File type",
+    "Entire period",
+    "Formatted",
 ];
 
 const titleTranslations = {};

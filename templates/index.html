@@ -142,7 +142,7 @@
                     </div>
                 </div>
 
-                <hr>
+                <hr class="border-dark">
 
                 <div class="row text-dark">
                     <div class="mb-2 col-12 col-sm-6 col-md-6 col-lg-3 col-xl-3 col-xxl-3">
@@ -208,6 +208,21 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="archive-readings-table-tab">
+                    <div class="d-flex justify-content-center my-3" id="archive-readings-table-loading">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-danger d-flex m-0 d-none mt-2" id="archive-readings-table-error">
+                        <div class="fs-1">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <div class="ms-3 mt-2 fs-4">
+                            <span text-id="6">Wystąpił błąd</span>
+                        </div>
+                    </div>
+
                     <div class="table-responsive d-none mt-2" id="archive-readings-table-div">
                         <table class="table table-hover">
                             <thead>
@@ -277,51 +292,66 @@
                     <div class="ms-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-temperature" checked>
-                            <label class="form-check-label" for="chart-temperature">
+                            <label class="form-check-label text-dark" for="chart-temperature">
                                 <span text-id="2">Temperatura</span>
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-humidity">
-                            <label class="form-check-label" for="chart-humidity">
+                            <label class="form-check-label text-dark" for="chart-humidity">
                                 <span text-id="3">Wilgotność</span>
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-pressure">
-                            <label class="form-check-label" for="chart-pressure">
+                            <label class="form-check-label text-dark" for="chart-pressure">
                                 <span text-id="4">Ciśnienie</span>
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-dewpoint">
-                            <label class="form-check-label" for="chart-dewpoint">
+                            <label class="form-check-label text-dark" for="chart-dewpoint">
                                 <span text-id="5">Punkt rosy</span>
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-pm1-0">
-                            <label class="form-check-label" for="chart-pm1-0">
+                            <label class="form-check-label text-dark" for="chart-pm1-0">
                                 PM 1.0
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-pm2-5">
-                            <label class="form-check-label" for="chart-pm2-5">
+                            <label class="form-check-label text-dark" for="chart-pm2-5">
                                 PM 2.5
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-pm10">
-                            <label class="form-check-label" for="chart-pm10">
+                            <label class="form-check-label text-dark" for="chart-pm10">
                                 PM 10
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" value="" id="chart-aqi">
-                            <label class="form-check-label" for="chart-aqi">
+                            <label class="form-check-label text-dark" for="chart-aqi">
                                 AQI
                             </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center my-3" id="archive-readings-chart-loading">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-danger d-flex m-0 d-none mt-2" id="archive-readings-chart-error">
+                        <div class="fs-1">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <div class="ms-3 mt-2 fs-4">
+                            <span text-id="6">Wystąpił błąd</span>
                         </div>
                     </div>
 
@@ -329,21 +359,30 @@
                         <canvas id="archive-readings-chart"></canvas>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="archive-readings-download-tab">...</div>
-            </div>
+                <div class="tab-pane fade" id="archive-readings-download-tab">
+                    <div class="form-floating mb-1">
+                        <select class="form-select" id="download-type-select">
+                            <option value="json">JSON</option>
+                            <option value="csv">CSV</option>
+                            <option value="sql">SQL</option>
+                            <option value="yaml">YAML</option>
+                            <option value="xml">XML</option>
+                            <option value="excel">Excel</option>
+                        </select>
+                        <label for="file-type-select" text-id="26">Typ pliku</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="" id="download-entire-period">
+                        <label class="form-check-label text-dark" for="download-entire-period" text-id="27">Cały okres</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="" id="download-formatted">
+                        <label class="form-check-label text-dark" for="download-formatted" text-id="28">Sformatowane</label>
+                    </div>
 
-            <div class="d-flex justify-content-center my-3" id="archive-readings-loading">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-            
-            <div class="alert alert-danger d-flex m-0 d-none mt-2" id="archive-readings-error">
-                <div class="fs-1">
-                    <i class="bi bi-x-circle"></i>
-                </div>
-                <div class="ms-3 mt-2 fs-4">
-                    <span text-id="6">Wystąpił błąd</span>
+                    <a class="btn btn-primary mt-2" id="download" href="#" target="_blank">
+                        <i class="bi bi-download"></i> <span text-id="25">Pobierz</span>
+                    </a>
                 </div>
             </div>
         </div>

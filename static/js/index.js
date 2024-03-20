@@ -81,10 +81,12 @@ function loadCurrentReadings() {
 }
 
 function loadArchiveReadings() {
-    document.querySelector("#archive-readings-loading").classList.remove("d-none");
+    document.querySelector("#archive-readings-table-loading").classList.remove("d-none");
+    document.querySelector("#archive-readings-chart-loading").classList.remove("d-none");
     document.querySelector("#archive-readings-table-div").classList.add("d-none");
     document.querySelector("#archive-readings-chart").classList.add("d-none");
-    document.querySelector("#archive-readings-error").classList.add("d-none");
+    document.querySelector("#archive-readings-table-error").classList.add("d-none");
+    document.querySelector("#archive-readings-chart-error").classList.add("d-none");
 
     try {
         controller.abort();
@@ -325,18 +327,40 @@ function loadArchiveReadings() {
 
             document.querySelector("#archive-readings-table-div").classList.remove("d-none");
             document.querySelector("#archive-readings-chart").classList.remove("d-none");
-            document.querySelector("#archive-readings-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-table-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-chart-loading").classList.add("d-none");
         } else if (json.status === "error") {
-            document.querySelector("#archive-readings-loading").classList.add("d-none");
-            document.querySelector("#archive-readings-error").classList.remove("d-none");
+            document.querySelector("#archive-readings-table-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-chart-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-table-error").classList.remove("d-none");
+            document.querySelector("#archive-readings-chart-error").classList.remove("d-none");
         }
     })
     .catch((err) => {
         if (String(err) !== "AbortError: The user aborted a request.") {
-            document.querySelector("#archive-readings-loading").classList.add("d-none");
-            document.querySelector("#archive-readings-error").classList.remove("d-none");
+            document.querySelector("#archive-readings-table-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-chart-loading").classList.add("d-none");
+            document.querySelector("#archive-readings-table-error").classList.remove("d-none");
+            document.querySelector("#archive-readings-chart-error").classList.remove("d-none");
         }
     });
+}
+
+function updateDownloadLink() {
+    var params = {};
+
+    if (document.querySelector("#download-entire-period").checked) {
+        params.all = "true";
+    } else {
+        params.start_date = document.querySelector("#archive-readings-start-date").value;
+        params.end_date = document.querySelector("#archive-readings-end-date").value;
+    }
+
+    if (document.querySelector("#download-formatted").checked) {
+        params.format = "true";
+    }
+
+    document.querySelector("#download").href = "/api/archive_readings/download/" + document.querySelector("#download-type-select").value + "?" + new URLSearchParams(params);
 }
 
 function loadAnnouncements() {
@@ -611,3 +635,13 @@ document.querySelector("#archive-readings-table-div").querySelectorAll("th[scope
         loadArchiveReadings();
     });
 });
+
+document.querySelector("#download-type-select").addEventListener("change", (evt) => {
+    ["json", "xml"].includes(evt.currentTarget.value) ? document.querySelector("#download-formatted").parentElement.classList.remove("d-none") : document.querySelector("#download-formatted").parentElement.classList.add("d-none");
+});
+
+document.querySelectorAll(["#download-type-select", "#download-entire-period", "#download-formatted", "#archive-readings-start-date", "#archive-readings-end-date"]).forEach((e) => {
+    e.addEventListener('change', updateDownloadLink);
+});
+
+updateDownloadLink();

@@ -40,7 +40,8 @@
     -webkit-backdrop-filter: blur(50px);
     backdrop-filter: blur(50px);
 
-    background-color: #5f5d5d17;
+    /* background-color: #5f5d5d17; */
+    background-color: #ffffff4d;
 }
 
 #background-video {
