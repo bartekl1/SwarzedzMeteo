@@ -7,6 +7,9 @@
 - [Flask](https://flask.palletsprojects.com/)
 - [Requests](https://requests.readthedocs.io/)
 - [cachetools](https://github.com/tkem/cachetools/)
+- [PyYAML](https://pyyaml.org/)
+- [dicttoxml](https://github.com/quandyfactory/dicttoxml)
+- [openpyxl](https://openpyxl.readthedocs.io/)
 
 ### Biblioteki NPM
 
