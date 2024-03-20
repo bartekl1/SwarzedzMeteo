@@ -95,3 +95,8 @@
 #archive-readings-table-div th[scope=col] {
     cursor: pointer;
 }
+
+[data-bs-toggle="pill"] {
+    --bs-nav-link-color: #2265c7;
+    --bs-nav-link-hover-color: #5597f9;
+}
