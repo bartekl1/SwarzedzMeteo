@@ -557,6 +557,7 @@ def archive_readings_excel():
         readings = rj['readings']
 
         wb = Workbook()
+        wb.properties.creator = "Swarzędz Meteo"
         ws = wb.active
 
         ws.title = "Readings"
