@@ -16,6 +16,29 @@ Amateur meteorological station in Swarzędz
 
 ![Baner](.github/img/baner.png)
 
-This is an amateur weather station mounted on a balcony. \
-The weather station runs on a Raspberry Pi Zero W microcomputer. \
-A DS18B20 sensor was used to measure temperature, and a BME280 sensor was used to measure humidity and pressure.
+## Hardware
+
+Amateur meteo station installed on the balcony. \
+The weather station works on a Raspberry Pi Zero W microcomputer. \
+A DS18B20 sensor was used to measure temperature, a BME280 sensor was used to measure humidity and pressure, and a PMS5003 sensor was used to measure air quality.
+
+## Available measurements
+
+- temperature
+- humidity
+- pressure
+- dew point (calculated from temperature and humidity)
+- PM 1.0
+- PM 2.5
+- PM 10
+- AQI (calculated from PM 10 and PM 2.5)
+
+## Available features
+
+- Current readings
+- Archive readings
+    - Table
+    - Chart
+    - Download - JSON, CSV, SQL, YAML, XML, Excel
+- API - current readings, archive readings
+- Widget - current readings

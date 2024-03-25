@@ -15,6 +15,29 @@ Amatorska stacja meteo w Swarzędzu
 
 ![Baner](.github/img/baner.png)
 
-To jest amatorska stacja meteo zamontowana na balkonie. \
+## Sprzęt
+
+Amatorska stacja meteo zamontowana na balkonie. \
 Stacja meteo działa na mikrokomputerze Raspberry Pi Zero W. \
-Do pomiaru temperatury wykorzystany został czujnik DS18B20, a do pomiaru wilgotności i ciśnienia czujnik BME280.
+Do pomiaru temperatury wykorzystany został czujnik DS18B20, do pomiaru wilgotności i ciśnienia czujnik BME280, a do pomiaru jakości powietrza czujnik PMS5003.
+
+## Dostępne pomiary
+
+- temperatura
+- wilgotność
+- ciśnienie
+- punkt rosy (obliczany z temperatury i wilgotności)
+- PM 1.0
+- PM 2.5
+- PM 10
+- AQI (obliczany z PM 10 i PM 2.5)
+
+## Dostępne funkcje
+
+- Bieżące odczyty
+- Archiwalne odczyty
+    - Tabela
+    - Wykres
+    - Pobieranie - JSON, CSV, SQL, YAML, XML, Excel
+- API - bieżące odczyty, archiwalne odczyty
+- Widżet - bieżące odczyty
