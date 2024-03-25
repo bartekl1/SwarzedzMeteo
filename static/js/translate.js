@@ -28,6 +28,7 @@ const textTranslations = [
     "File type",
     "Entire period",
     "Formatted",
+    "Archive readings",
 ];
 
 const titleTranslations = {};
