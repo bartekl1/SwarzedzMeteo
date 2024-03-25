@@ -141,10 +141,10 @@ function loadArchiveReadings() {
                         break;
 
                     case "temperature-column":
-                        if (!(reading.temperature * 10 in data)) {
-                            data[reading.temperature * 10] = [];
+                        if (!(reading.temperature * 10 + 200 in data)) {
+                            data[reading.temperature * 10 + 200] = [];
                         }
-                        data[reading.temperature * 10].push(reading);
+                        data[reading.temperature * 10 + 200].push(reading);
                         break;
 
                     case "humidity-column":
@@ -162,10 +162,10 @@ function loadArchiveReadings() {
                         break;
 
                     case "dewpoint-column":
-                        if (!(reading.dewpoint * 10 in data)) {
-                            data[reading.dewpoint * 10] = [];
+                        if (!(reading.dewpoint * 10 + 200 in data)) {
+                            data[reading.dewpoint * 10 + 200] = [];
                         }
-                        data[reading.dewpoint * 10].push(reading);
+                        data[reading.dewpoint * 10 + 200].push(reading);
                         break;
 
                     case "pm1-0-column":
