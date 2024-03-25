@@ -21,6 +21,10 @@ jobs:
               run: |
                     curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}" -d '{"input": "git pull\n"}' -H "Content-Type: application/json" "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/${{ secrets.PYTHONANYWHERE_CONSOLE }}/send_input/"
 
+            - name: Install PIP requirements
+              run: |
+                    curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}" -d '{"input": "pip${{ secrets.PYTHON_VERSION }} install -r requirements.txt\n"}' -H "Content-Type: application/json" "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/consoles/${{ secrets.PYTHONANYWHERE_CONSOLE }}/send_input/"
+
             - name: Reaload webapp
               run: |
                     curl -X "POST" -H "Authorization: Token ${{ secrets.PYTHONANYWHERE_TOKEN }}"  "https://${{ secrets.PYTHONANYWHERE_HOST }}/api/v0/user/${{ secrets.PYTHONANYWHERE_USERNAME }}/webapps/${{ secrets.PYTHONANYWHERE_DOMAIN }}/reload/"
